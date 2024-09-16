@@ -369,9 +369,125 @@ export class DateFormatter {
 	public formatRangeToday(
 		from: Date,
 		to: Date,
-		options: { today?: Date; locale: Intl.LocalesArgument },
+		{
+			today,
+			locale,
+			timeZoneOptions,
+		}: Pick<
+			RangeFormatOptions & { today: Date },
+			'today' | 'timeZoneOptions' | 'locale'
+		>,
 	) {
-		return new Intl.DateTimeFormat(options.locale).formatRange(from, to);
+		const todayZoned = toZonedDate(today, timeZoneOptions?.timeZone);
+		const { from: fromZoned, to: toZoned } = this.adjustDates(from, to, {
+			timeZone: timeZoneOptions?.timeZone,
+		});
+		const sameMonth = isSameMonth(fromZoned, toZoned);
+		const sameYear = isSameYear(fromZoned, toZoned);
+		const thisYear = sameYear && isSameYear(fromZoned, todayZoned);
+		const dateRangeType = this.getRangeType(fromZoned, toZoned);
+
+		if (dateRangeType === 'fullQuarters' && !this.onlyIntl) {
+			return this.formatRangeFullQuarters(fromZoned, toZoned, {
+				locale,
+				thisYear,
+			});
+		}
+
+		const { showMonth, showDay, showYear, showHour, showMinute, showSecond } =
+			this.formatRangePartsToShowToday(fromZoned, toZoned, {
+				today: todayZoned,
+			});
+
+		const { from: fromIntl, to: toIntl } = this.adjustDatesForDisplayIntl(
+			from,
+			to,
+			{
+				showTime: showHour || showMinute || showSecond,
+				timeZone: timeZoneOptions?.timeZone,
+			},
+		);
+		return new Intl.DateTimeFormat(locale, {
+			month:
+				dateRangeType === 'fullMonths' && sameMonth
+					? 'long'
+					: showMonth
+						? 'short'
+						: undefined,
+			year: showYear ? 'numeric' : undefined,
+			day: showDay ? 'numeric' : undefined,
+			hour: showHour ? 'numeric' : undefined,
+			minute: showMinute ? 'numeric' : undefined,
+			second: showSecond ? 'numeric' : undefined,
+			timeZoneName: timeZoneOptions?.show ? 'shortOffset' : undefined,
+			timeZone: timeZoneOptions?.timeZone,
+		}).formatRange(fromIntl, toIntl);
+	}
+	private _getRangePartsToShowToday(
+		from: Date,
+		to: Date,
+		{ today }: { today: Date },
+	): Record<
+		| 'showHour'
+		| 'showMinute'
+		| 'showSecond'
+		| 'showDay'
+		| 'showMonth'
+		| 'showYear',
+		boolean
+	> {
+		const sameDay = isSameDay(from, to);
+		const sameMonth = isSameMonth(from, to);
+		const sameYear = isSameYear(from, to);
+		const thisYear = sameYear && isSameYear(from, today);
+		const thisMonth = sameMonth && isSameMonth(from, today);
+		const thisDay = sameDay && isSameDay(from, today);
+		const { showDay, showMonth, showHour, showMinute, showSecond } =
+			this.getRangePartsToShow(from, to);
+
+		return {
+			showHour,
+			showMinute,
+			showSecond,
+			showDay: showDay && !thisDay,
+			showMonth: showMonth && !thisMonth,
+			showYear: !thisYear,
+		};
+	}
+	public formatRangePartsToShowToday(
+		from: Date,
+		to: Date,
+		{
+			today,
+
+			timeZone,
+		}: {
+			today: Date;
+
+			timeZone?: string;
+		},
+	): Record<
+		| 'showHour'
+		| 'showMinute'
+		| 'showSecond'
+		| 'showDay'
+		| 'showMonth'
+		| 'showYear',
+		boolean
+	> {
+		const { from: fromZoned, to: toZoned } = this.adjustDates(from, to, {
+			timeZone: timeZone,
+		});
+		const todayZoned = toZonedDate(today, timeZone);
+		const parts = this._getRangePartsToShowToday(fromZoned, toZoned, {
+			today: todayZoned,
+		});
+		const { showDay, showHour, showMinute, showMonth, showSecond, showYear } =
+			parts;
+		const showSomething =
+			showDay || showMonth || showHour || showMinute || showSecond || showYear;
+
+		return { ...parts, showYear: showYear || !showSomething };
 	}
 	public getRangeType(
 		from: Date,
