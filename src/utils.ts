@@ -1,4 +1,14 @@
-import { dayStart, diffDays, diffHours, diffMinutes, diffSeconds, minuteStart, monthEnd, monthStart, yearStart } from "@formkit/tempo";
+import {
+	dayStart,
+	diffDays,
+	diffHours,
+	diffMinutes,
+	diffSeconds,
+	minuteStart,
+	monthEnd,
+	monthStart,
+	yearStart,
+} from '@formkit/tempo';
 
 export function isSameMonth(dateA: Date, dateB: Date) {
 	return diffDays(monthStart(dateA), monthStart(dateB)) === 0;

@@ -1,5 +1,34 @@
-import { addDay, addHour, addMinute, addMonth, addSecond, addYear, dayEnd, dayStart, hourEnd, hourStart, minuteEnd, minuteStart, monthEnd, monthStart, offset, removeOffset, yearEnd, yearStart } from "@formkit/tempo";
-import { getEndOfQuarter, getStartOfQuarter, isSameDay, isSameMinute, isSameMonth, isSameSecond, isSameYear, secondEnd, secondStart } from "./utils.js";
+import {
+	addDay,
+	addHour,
+	addMinute,
+	addMonth,
+	addSecond,
+	addYear,
+	dayEnd,
+	dayStart,
+	hourEnd,
+	hourStart,
+	minuteEnd,
+	minuteStart,
+	monthEnd,
+	monthStart,
+	offset,
+	removeOffset,
+	yearEnd,
+	yearStart,
+} from '@formkit/tempo';
+import {
+	getEndOfQuarter,
+	getStartOfQuarter,
+	isSameDay,
+	isSameMinute,
+	isSameMonth,
+	isSameSecond,
+	isSameYear,
+	secondEnd,
+	secondStart,
+} from './utils.js';
 
 export const resolutions = [
 	'year',
@@ -23,8 +52,8 @@ type Branded<T, B extends string> = T & Brand<B>;
 type BoundedDate = Branded<Date, 'bounded'>;
 type ZonedDate = Branded<Date, 'zoned'>;
 type AdjustedDate = BoundedDate & ZonedDate;
-export type Resolution = typeof resolutions[number]
-export type RangeType = typeof rangeTypes[number]
+export type Resolution = (typeof resolutions)[number];
+export type RangeType = (typeof rangeTypes)[number];
 export type RangeFormatOptions = {
 	/**
 	 * Display the date(s) with locale
@@ -58,8 +87,7 @@ function fulfillsResolution(
 	resolutionToFulfill: Resolution,
 ) {
 	return (
-		resolutions.indexOf(resolution) >=
-		resolutions.indexOf(resolutionToFulfill)
+		resolutions.indexOf(resolution) >= resolutions.indexOf(resolutionToFulfill)
 	);
 }
 /**
@@ -229,12 +257,17 @@ function addResolution(date: Date, resolution: Resolution, amount: number) {
 	}
 }
 
-export class DateFormatter{
+export class DateFormatter {
 	private dateResolution: Resolution;
 	private displayResolution: Resolution;
 	private boundary: 'inclusive' | 'exclusive';
 	private onlyIntl: boolean;
-    constructor(options?:Pick<RangeFormatOptions,'boundary' |'dateResolution' | 'displayResolution' | 'onlyIntl'>){
+	constructor(
+		options?: Pick<
+			RangeFormatOptions,
+			'boundary' | 'dateResolution' | 'displayResolution' | 'onlyIntl'
+		>,
+	) {
 		this.dateResolution = options?.dateResolution ?? 'second';
 		const displayResolution = options?.displayResolution ?? 'minute';
 		this.displayResolution = fulfillsResolution(
@@ -245,23 +278,35 @@ export class DateFormatter{
 			: this.dateResolution;
 		this.boundary = options?.boundary ?? 'inclusive';
 		this.onlyIntl = options?.onlyIntl ?? true;
-    }
+	}
 
-    public formatRange(from: Date,to:Date, options : {locale:Intl.LocalesArgument}){
-        return new Intl.DateTimeFormat(options.locale).formatRange(from, to)
-    }
-	
-    public formatRangeToday(from: Date,to:Date, options : {today?: Date ,locale:Intl.LocalesArgument}){
-        return new Intl.DateTimeFormat(options.locale).formatRange(from, to)
-    }
-    public getRangeType(from: Date,to:Date,options?: Pick<RangeFormatOptions,'timeZoneOptions'> ): RangeType | undefined{
-        const { from: fromZoned, to: toZoned } = this.adjustDates(from, to, {
+	public formatRange(
+		from: Date,
+		to: Date,
+		options: { locale: Intl.LocalesArgument },
+	) {
+		return new Intl.DateTimeFormat(options.locale).formatRange(from, to);
+	}
+
+	public formatRangeToday(
+		from: Date,
+		to: Date,
+		options: { today?: Date; locale: Intl.LocalesArgument },
+	) {
+		return new Intl.DateTimeFormat(options.locale).formatRange(from, to);
+	}
+	public getRangeType(
+		from: Date,
+		to: Date,
+		options?: Pick<RangeFormatOptions, 'timeZoneOptions'>,
+	): RangeType | undefined {
+		const { from: fromZoned, to: toZoned } = this.adjustDates(from, to, {
 			timeZone: options?.timeZoneOptions?.timeZone,
 		});
 		const sameDay = isSameDay(fromZoned, toZoned);
 		const sameMonth = isSameMonth(fromZoned, toZoned);
 		const sameYear = isSameYear(fromZoned, toZoned);
-		
+
 		const displayResolution = this.displayResolution;
 		if (isFullYears(fromZoned, toZoned, { resolution: displayResolution })) {
 			return 'fullYears';
@@ -282,7 +327,7 @@ export class DateFormatter{
 			return 'sameYear';
 		}
 		return undefined;
-    }
+	}
 	private adjustStartDate(
 		date: Date,
 		{
@@ -294,7 +339,7 @@ export class DateFormatter{
 		const zoned = toZonedDate(date, timeZone);
 		return startOf(zoned, this.displayResolution) as AdjustedDate;
 	}
-	
+
 	private adjustEndDate(
 		date: Date,
 		{

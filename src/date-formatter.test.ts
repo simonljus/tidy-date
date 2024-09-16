@@ -1,9 +1,9 @@
 import { describe, expect, test } from 'vitest';
 import {
-	type RangeFormatOptions,
 	DateFormatter,
-	type  RangeType,
-	type  Resolution,
+	type RangeFormatOptions,
+	type RangeType,
+	type Resolution,
 } from './date-formatter.js';
 
 const today = new Date('2023-09-16T12:00:00.000');
@@ -21,7 +21,6 @@ describe('format date range', () => {
 				locale: 'en-US',
 			}),
 		).toBe(joinDates('Jan 1', '12'));
-		
 	});
 });
 
