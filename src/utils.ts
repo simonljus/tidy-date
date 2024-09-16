@@ -1,4 +1,4 @@
-import { dayStart, diffDays, diffHours, diffMinutes, diffSeconds, minuteStart, monthStart, yearStart } from "@formkit/tempo";
+import { dayStart, diffDays, diffHours, diffMinutes, diffSeconds, minuteStart, monthEnd, monthStart, yearStart } from "@formkit/tempo";
 
 export function isSameMonth(dateA: Date, dateB: Date) {
 	return diffDays(monthStart(dateA), monthStart(dateB)) === 0;
@@ -30,4 +30,27 @@ export function secondStart(date: Date) {
 	const copy = new Date(date);
 	copy.setMilliseconds(0);
 	return copy;
+}
+
+function getStartOfQuarter(date: Date) {
+	const clone = new Date(date);
+	const month = clone.getMonth();
+	for (let monthIndex = 0; monthIndex < 12; monthIndex += 3) {
+		if (month <= monthIndex + 2) {
+			clone.setMonth(monthIndex);
+			break;
+		}
+	}
+	return monthStart(clone);
+}
+function getEndOfQuarter(date: Date) {
+	const clone = new Date(date);
+	const month = clone.getMonth();
+	for (let monthIndex = 2; monthIndex < 12; monthIndex += 3) {
+		if (month <= monthIndex) {
+			clone.setMonth(monthIndex);
+			break;
+		}
+	}
+	return monthEnd(clone);
 }
