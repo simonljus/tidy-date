@@ -32,7 +32,7 @@ export function secondStart(date: Date) {
 	return copy;
 }
 
-function getStartOfQuarter(date: Date) {
+export function getStartOfQuarter(date: Date) {
 	const clone = new Date(date);
 	const month = clone.getMonth();
 	for (let monthIndex = 0; monthIndex < 12; monthIndex += 3) {
@@ -43,7 +43,7 @@ function getStartOfQuarter(date: Date) {
 	}
 	return monthStart(clone);
 }
-function getEndOfQuarter(date: Date) {
+export function getEndOfQuarter(date: Date) {
 	const clone = new Date(date);
 	const month = clone.getMonth();
 	for (let monthIndex = 2; monthIndex < 12; monthIndex += 3) {
