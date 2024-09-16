@@ -43,14 +43,38 @@ export type RangeFormatOptions = {
 	 */
 	boundary?: 'inclusive' | 'exclusive';
 };
-export class DateFormatter{
-    constructor(options?:Pick<RangeFormatOptions,'boundary' |'dateResolution' | 'displayResolution' | 'onlyIntl'>){
 
+function fulfillsResolution(
+	resolution: Resolution,
+	resolutionToFulfill: Resolution,
+) {
+	return (
+		resolutions.indexOf(resolution) >=
+		resolutions.indexOf(resolutionToFulfill)
+	);
+}
+export class DateFormatter{
+	private dateResolution: Resolution;
+	private displayResolution: Resolution;
+	private boundary: 'inclusive' | 'exclusive';
+	private onlyIntl: boolean;
+    constructor(options?:Pick<RangeFormatOptions,'boundary' |'dateResolution' | 'displayResolution' | 'onlyIntl'>){
+		this.dateResolution = options?.dateResolution ?? 'second';
+		const displayResolution = options?.displayResolution ?? 'minute';
+		this.displayResolution = fulfillsResolution(
+			this.dateResolution,
+			displayResolution,
+		)
+			? displayResolution
+			: this.dateResolution;
+		this.boundary = options?.boundary ?? 'inclusive';
+		this.onlyIntl = options?.onlyIntl ?? true;
     }
 
     public formatRange(from: Date,to:Date, options : {locale:Intl.LocalesArgument}){
         return new Intl.DateTimeFormat(options.locale).formatRange(from, to)
     }
+	
     public formatRangeToday(from: Date,to:Date, options : {today?: Date ,locale:Intl.LocalesArgument}){
         return new Intl.DateTimeFormat(options.locale).formatRange(from, to)
     }
