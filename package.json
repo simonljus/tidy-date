@@ -1,0 +1,38 @@
+{
+	"name": "tidy-date",
+	"version": "0.1.0",
+	"license": "MIT",
+	"type": "module",
+	"files": ["dist"],
+  "repository": "simonljus/tidy-date",
+	"engines": {
+		"node": ">=18"
+	},
+	"exports": {
+		"./package.json": "./package.json",
+		".": {
+			"import": "./dist/index.js"
+		}
+	},
+	"scripts": {
+		"dev": "vitest",
+		"test": "vitest run",
+		"ci": "pnpm run check-format && pnpm run build && pnpm run check-exports",
+		"build": "tsup",
+		"fix-format": "biome check --write .",
+		"check-format": "biome check .",
+		"check-exports": "attw $(pnpm pack) --ignore-rules=no-resolution"
+	},
+	"devDependencies": {
+		"@arethetypeswrong/cli": "^0.16.2",
+		"@biomejs/biome": "1.9.1",
+		"@changesets/cli": "^2.27.8",
+		"@total-typescript/tsconfig": "^1.0.4",
+		"tsup": "^8.2.4",
+		"typescript": "^5.6.2",
+		"vitest": "^2.1.1"
+	},
+	"dependencies": {
+		"@formkit/tempo": "^0.1.2"
+	}
+}
