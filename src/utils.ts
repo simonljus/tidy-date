@@ -15,3 +15,19 @@ export function isSameMinute(dateA: Date, dateB: Date) {
 export function isSameSecond(dateA: Date, dateB: Date) {
 	return diffSeconds(dateA, dateB) === 0;
 }
+
+/**
+ *
+ * @param date
+ * @returns a Date object for the end of the given second
+ */
+export function secondEnd(date: Date) {
+	const copy = new Date(date);
+	copy.setMilliseconds(999);
+	return copy;
+}
+export function secondStart(date: Date) {
+	const copy = new Date(date);
+	copy.setMilliseconds(0);
+	return copy;
+}
