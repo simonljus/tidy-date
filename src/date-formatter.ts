@@ -5,6 +5,7 @@ import {
 	addMonth,
 	addSecond,
 	addYear,
+	applyOffset,
 	dayEnd,
 	dayStart,
 	hourEnd,
@@ -20,10 +21,12 @@ import {
 } from '@formkit/tempo';
 import {
 	getEndOfQuarter,
+	getQuarter,
 	getStartOfQuarter,
 	isSameDay,
 	isSameMinute,
 	isSameMonth,
+	isSameQuarter,
 	isSameSecond,
 	isSameYear,
 	secondEnd,
@@ -257,6 +260,41 @@ function addResolution(date: Date, resolution: Resolution, amount: number) {
 	}
 }
 
+function isStartOfDay(date: Date, { resolution }: { resolution: Resolution }) {
+	return isSameDate(dayStart(date), date, { resolution });
+}
+
+function isStartOfHour(date: Date, { resolution }: { resolution: Resolution }) {
+	return isSameDate(hourStart(date), date, { resolution });
+}
+function isStartOfMinute(
+	date: Date,
+	{ resolution }: { resolution: Resolution },
+) {
+	return isSameDate(minuteStart(date), date, { resolution });
+}
+function isEndOfHour(date: Date, { resolution }: { resolution: Resolution }) {
+	return isSameDate(hourEnd(date), date, { resolution });
+}
+function isEndOfMinute(date: Date, { resolution }: { resolution: Resolution }) {
+	return isSameDate(minuteEnd(date), date, { resolution });
+}
+
+function isEndOfDay(date: Date, { resolution }: { resolution: Resolution }) {
+	return isSameDate(dayEnd(date), date, { resolution });
+}
+function removeZoned({
+	originalDate,
+	zonedDate,
+	timeZone,
+}: { originalDate: Date; zonedDate: ZonedDate; timeZone: string | undefined }) {
+	if (!timeZone) {
+		return zonedDate;
+	}
+	const offsetToTimezone = offset(originalDate, timeZone);
+	return applyOffset(zonedDate, offsetToTimezone);
+}
+
 export class DateFormatter {
 	private dateResolution: Resolution;
 	private displayResolution: Resolution;
@@ -283,9 +321,49 @@ export class DateFormatter {
 	public formatRange(
 		from: Date,
 		to: Date,
-		options: { locale: Intl.LocalesArgument },
+		{
+			locale,
+			timeZoneOptions,
+		}: Pick<RangeFormatOptions, 'locale' | 'timeZoneOptions'>,
 	) {
-		return new Intl.DateTimeFormat(options.locale).formatRange(from, to);
+		const { from: fromZoned, to: toZoned } = this.adjustDates(from, to, {
+			timeZone: timeZoneOptions?.timeZone,
+		});
+		const sameMonth = isSameMonth(fromZoned, toZoned);
+		const dateRangeType = this.getRangeType(fromZoned, toZoned);
+
+		if (dateRangeType === 'fullQuarters' && !this.onlyIntl) {
+			return this.formatRangeFullQuarters(fromZoned, toZoned, {
+				locale,
+				thisYear: false,
+			});
+		}
+
+		const { showMonth, showDay, showHour, showMinute, showSecond } =
+			this.getRangePartsToShow(fromZoned, toZoned);
+		const { from: fromIntl, to: toIntl } = this.adjustDatesForDisplayIntl(
+			from,
+			to,
+			{
+				showTime: showHour || showMinute || showSecond,
+				timeZone: timeZoneOptions?.timeZone,
+			},
+		);
+		return new Intl.DateTimeFormat(locale, {
+			month:
+				dateRangeType === 'fullMonths' && sameMonth
+					? 'long'
+					: showMonth
+						? 'short'
+						: undefined,
+			year: 'numeric',
+			day: showDay ? 'numeric' : undefined,
+			hour: showHour ? 'numeric' : undefined,
+			minute: showMinute ? 'numeric' : undefined,
+			second: showSecond ? 'numeric' : undefined,
+			timeZone: timeZoneOptions?.timeZone,
+			timeZoneName: timeZoneOptions?.show ? 'short' : undefined,
+		}).formatRange(fromIntl, toIntl);
 	}
 
 	public formatRangeToday(
@@ -328,6 +406,7 @@ export class DateFormatter {
 		}
 		return undefined;
 	}
+
 	private adjustStartDate(
 		date: Date,
 		{
@@ -377,6 +456,176 @@ export class DateFormatter {
 				timeZone,
 			}),
 			to: this.adjustEndDate(to, { timeZone }),
+		};
+	}
+	private formatRangeFullQuarters(
+		from: Date,
+		to: Date,
+		{ locale, thisYear }: { locale: Intl.LocalesArgument; thisYear: boolean },
+	) {
+		if (isSameQuarter(from, to)) {
+			const year = thisYear
+				? ''
+				: new Intl.DateTimeFormat(locale, {
+						year: thisYear ? undefined : 'numeric',
+					}).format(from);
+			return [`Q${getQuarter(from) + 1}`, year]
+				.filter((str) => str.length > 0)
+				.join(' ');
+		}
+		if (thisYear) {
+			return [`Q${getQuarter(from) + 1}`, `Q${getQuarter(to) + 1}`].join(
+				'\u2013',
+			);
+		}
+		const fromYear = new Intl.DateTimeFormat(locale, {
+			year: 'numeric',
+		}).format(from);
+		const fromQuarter = [`Q${getQuarter(from) + 1}`, fromYear]
+			.filter((str) => str.length > 0)
+			.join(' ');
+		const toYear = new Intl.DateTimeFormat(locale, { year: 'numeric' }).format(
+			to,
+		);
+		const toQuarter = [`Q${getQuarter(to) + 1}`, toYear]
+			.filter((str) => str.length > 0)
+			.join(' ');
+		return [fromQuarter, toQuarter].join('\u2009\u2013\u2009');
+	}
+	private getRangePartsToShow(
+		from: Date,
+		to: Date,
+		{ timeZoneOptions }: Pick<RangeFormatOptions, 'timeZoneOptions'> = {},
+	): Record<
+		'showMonth' | 'showDay' | 'showHour' | 'showMinute' | 'showSecond',
+		boolean
+	> {
+		const { from: fromZoned, to: toZoned } = this.adjustDates(from, to, {
+			timeZone: timeZoneOptions?.timeZone,
+		});
+		const displayResolution = this.displayResolution;
+		const showMonth =
+			fulfillsResolution(displayResolution, 'month') &&
+			(!isStartOfYear(fromZoned, { resolution: displayResolution }) ||
+				!isEndOfYear(toZoned, { resolution: displayResolution }));
+		const showDay =
+			fulfillsResolution(displayResolution, 'day') &&
+			(!isStartOfMonth(fromZoned, { resolution: displayResolution }) ||
+				!isEndOfMonth(toZoned, { resolution: displayResolution }));
+		const showHour =
+			fulfillsResolution(displayResolution, 'hour') &&
+			(!isStartOfDay(fromZoned, { resolution: displayResolution }) ||
+				!isEndOfDay(toZoned, { resolution: displayResolution }));
+		const showMinute =
+			fulfillsResolution(displayResolution, 'minute') &&
+			(!isStartOfHour(fromZoned, { resolution: displayResolution }) ||
+				!isEndOfHour(toZoned, { resolution: displayResolution }));
+		const showSecond =
+			fulfillsResolution(displayResolution, 'second') &&
+			(!isStartOfMinute(fromZoned, { resolution: displayResolution }) ||
+				!isEndOfMinute(toZoned, { resolution: displayResolution }));
+		return {
+			showMonth,
+			showDay,
+			showHour,
+			showMinute,
+			showSecond,
+		};
+	}
+	private adjustEndDateForDisplay(
+		date: Date,
+		{
+			showTime,
+			timeZone,
+		}: {
+			timeZone: string | undefined;
+			showTime: boolean;
+		},
+	): AdjustedDate {
+		const zoned = toZonedDate(date, timeZone);
+		const boundary = this.boundary;
+		const dateResolution = this.dateResolution;
+		const displayResolution = this.displayResolution;
+		if (boundary === 'inclusive') {
+			if (showTime && fulfillsResolution(dateResolution, 'hour')) {
+				const added = addResolution(zoned, dateResolution, 1);
+				return endOf(added, displayResolution) as AdjustedDate;
+			}
+			return endOf(zoned, displayResolution) as AdjustedDate;
+		}
+
+		const startZoned = startOf(zoned, lowerResolution(displayResolution));
+
+		if (
+			showTime ||
+			!isSameDate(startZoned, zoned, { resolution: dateResolution })
+		) {
+			return endOf(zoned, displayResolution) as AdjustedDate;
+		}
+
+		return endOf(
+			addResolution(zoned, dateResolution, -1),
+			displayResolution,
+		) as AdjustedDate;
+	}
+	private adjustEndDateForDisplayIntl(
+		date: Date,
+		{
+			showTime,
+			timeZone,
+		}: {
+			timeZone: string | undefined;
+			showTime: boolean;
+		},
+	): AdjustedDate {
+		const adjusted = this.adjustEndDateForDisplay(date, {
+			showTime,
+			timeZone,
+		});
+		return removeZoned({
+			originalDate: date,
+			zonedDate: adjusted,
+			timeZone,
+		}) as AdjustedDate;
+	}
+
+	private adjustStartDateForDisplayIntl(
+		date: Date,
+		{
+			timeZone,
+		}: {
+			timeZone: string | undefined;
+		},
+	): AdjustedDate {
+		const adjusted = this.adjustStartDate(date, {
+			timeZone,
+		});
+		return removeZoned({
+			originalDate: date,
+			zonedDate: adjusted,
+			timeZone,
+		}) as AdjustedDate;
+	}
+
+	private adjustDatesForDisplayIntl(
+		from: Date,
+		to: Date,
+		{
+			timeZone,
+			showTime,
+		}: {
+			timeZone: string | undefined;
+			showTime: boolean;
+		},
+	): { from: AdjustedDate; to: AdjustedDate } {
+		return {
+			from: this.adjustStartDateForDisplayIntl(from, {
+				timeZone,
+			}),
+			to: this.adjustEndDateForDisplayIntl(to, {
+				timeZone,
+				showTime,
+			}),
 		};
 	}
 }

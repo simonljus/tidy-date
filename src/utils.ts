@@ -64,3 +64,12 @@ export function getEndOfQuarter(date: Date) {
 	}
 	return monthEnd(clone);
 }
+
+const MONTHS_IN_QUARTER = 3;
+export function getQuarter(date: Date) {
+	const month = date.getMonth();
+	return Math.floor(month / MONTHS_IN_QUARTER);
+}
+export function isSameQuarter(dateA: Date, dateB: Date) {
+	return isSameYear(dateA, dateB) && getQuarter(dateA) === getQuarter(dateB);
+}
