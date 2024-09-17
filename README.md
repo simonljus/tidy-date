@@ -5,7 +5,7 @@ With inspiration from [vercel/little-date](https://github.com/vercel/little-date
 
 
 ## Features
-* Intl: Display the data in the User´s locale
+* Intl: Display the date in the User´s locale
 * Timezone: The date interval might works best in a specific timezone. 
 * Today: Use today's date to omit information (avoid displaying information like the current year or day)
 * Display Resolution: Display dates down to the second or only just to the hour. 
