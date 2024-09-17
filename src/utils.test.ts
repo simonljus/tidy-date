@@ -3,6 +3,7 @@ import {
 	fulfillsResolution,
 	getQuarter,
 	isEndOfDay,
+	isEndOfHour,
 	isEndOfMonth,
 	isEndOfYear,
 	isSameDay,
@@ -822,6 +823,45 @@ describe('start of hour', () => {
 		expect(isStartOfHour(date, { resolution: 'year' })).toBe(true);
 		expect(isStartOfHour(date, { resolution: 'year' })).toBe(true);
 		expect(isStartOfHour(date, { resolution: 'year' })).toBe(true);
+	});
+});
+
+describe('end of hour', () => {
+	test('hour', () => {
+		const date = new Date('2023-02-03T04:01:03.456');
+		expect(isEndOfHour(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'hour' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'minute' })).toBe(false);
+		expect(isEndOfHour(date, { resolution: 'second' })).toBe(false);
+	});
+	test('hour, minute', () => {
+		const date = new Date('2023-02-03T04:59:03.456');
+		expect(isEndOfHour(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'hour' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'minute' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'second' })).toBe(false);
+	});
+	test('hour, minute, second', () => {
+		const date = new Date('2023-02-03T04:59:59.456');
+		expect(isEndOfHour(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'hour' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'minute' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'second' })).toBe(true);
+	});
+	test('hour, minute, second,millisecond', () => {
+		const date = new Date('2023-02-03T04:59:59.999');
+		expect(isEndOfHour(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfHour(date, { resolution: 'year' })).toBe(true);
 	});
 });
 
