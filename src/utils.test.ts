@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import {
+	getQuarter,
 	isSameDay,
 	isSameHour,
 	isSameMinute,
@@ -369,5 +370,40 @@ describe('same quarter', () => {
 		const to = new Date('2023-12-31T23:59:59.999');
 		expect(isSameDay(from, from)).toBe(true);
 		expect(isSameDay(to, to)).toBe(true);
+	});
+});
+
+describe('get quarter', () => {
+	test('first quarter', () => {
+		const firstMonth = new Date('2023-01-02T01:23:45.678');
+		const secondMonth = new Date('2023-02-02T01:23:45.678');
+		const thirdMonth = new Date('2023-03-02T01:23:45.678');
+		expect(getQuarter(firstMonth)).toBe(0);
+		expect(getQuarter(secondMonth)).toBe(0);
+		expect(getQuarter(thirdMonth)).toBe(0);
+	});
+	test('second quarter', () => {
+		const firstMonth = new Date('2023-04-02T01:23:45.678');
+		const secondMonth = new Date('2023-05-02T01:23:45.678');
+		const thirdMonth = new Date('2023-06-02T01:23:45.678');
+		expect(getQuarter(firstMonth)).toBe(1);
+		expect(getQuarter(secondMonth)).toBe(1);
+		expect(getQuarter(thirdMonth)).toBe(1);
+	});
+	test('third quarter', () => {
+		const firstMonth = new Date('2023-07-02T01:23:45.678');
+		const secondMonth = new Date('2023-08-02T01:23:45.678');
+		const thirdMonth = new Date('2023-09-02T01:23:45.678');
+		expect(getQuarter(firstMonth)).toBe(2);
+		expect(getQuarter(secondMonth)).toBe(2);
+		expect(getQuarter(thirdMonth)).toBe(2);
+	});
+	test('fourth quarter', () => {
+		const firstMonth = new Date('2023-10-02T01:23:45.678');
+		const secondMonth = new Date('2023-11-02T01:23:45.678');
+		const thirdMonth = new Date('2023-12-02T01:23:45.678');
+		expect(getQuarter(firstMonth)).toBe(3);
+		expect(getQuarter(secondMonth)).toBe(3);
+		expect(getQuarter(thirdMonth)).toBe(3);
 	});
 });
