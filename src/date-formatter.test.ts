@@ -1073,8 +1073,8 @@ const formatDateDisplayMonth: {
 	{
 		description: 'year, month resolution',
 		date: new Date('2022-01-01T00:00:00.000'),
-		expectedDefault: '2022',
-		expected: {},
+		expectedDefault: 'January 2022',
+		expected: { year: '2022' },
 		options: { dateResolution: 'month', boundary: 'inclusive' },
 	},
 	{
@@ -1139,8 +1139,8 @@ const formatDateDisplayDay: {
 	{
 		description: 'year, day resolution',
 		date: new Date('2022-01-01T00:00:00.000'),
-		expectedDefault: '2022',
-		expected: {},
+		expectedDefault: 'January 1, 2022',
+		expected: { year: '2022', month: 'January 2022' },
 		options: { dateResolution: 'day', boundary: 'inclusive' },
 	},
 	{
@@ -1204,8 +1204,8 @@ const formatDateDisplayHour: {
 	{
 		description: 'year, hour resolution',
 		date: new Date('2022-01-01T00:00:00.000'),
-		expectedDefault: '2022',
-		expected: {},
+		expectedDefault: 'January 1, 2022',
+		expected: { year: '2022', month: 'January 2022' },
 		options: { dateResolution: 'hour', boundary: 'inclusive' },
 	},
 	{
@@ -1269,8 +1269,8 @@ const formatDateDisplayMinute: {
 	{
 		description: 'year, minute resolution',
 		date: new Date('2022-01-01T00:00:00.000'),
-		expectedDefault: '2022',
-		expected: {},
+		expectedDefault: 'January 1, 2022',
+		expected: { year: '2022', month: 'January 2022' },
 		options: { dateResolution: 'minute', boundary: 'inclusive' },
 	},
 	{
@@ -1350,15 +1350,21 @@ const formatDateDisplaySecond: {
 	{
 		description: 'second, second resolution',
 		date: new Date('2022-01-01T00:00:01.000'),
-		expectedDefault: '2022',
-		expected: { second: 'January 1, 2022 at 12:00:01 AM' },
+		expectedDefault: 'January 1, 2022',
+		expected: {
+			year: '2022',
+			month: 'January 2022',
+			second: 'January 1, 2022 at 12:00:01 AM',
+		},
 		options: { dateResolution: 'second', boundary: 'inclusive' },
 	},
 	{
 		description: 'minute, second resolution',
 		date: new Date('2022-01-01T00:01:00.000'),
-		expectedDefault: '2022',
+		expectedDefault: 'January 1, 2022',
 		expected: {
+			year: '2022',
+			month: 'January 2022',
 			second: 'January 1, 2022 at 12:01 AM',
 			minute: 'January 1, 2022 at 12:01 AM',
 		},
@@ -1367,8 +1373,10 @@ const formatDateDisplaySecond: {
 	{
 		description: 'hour, second resolution',
 		date: new Date('2022-01-01T01:00:00.000'),
-		expectedDefault: '2022',
+		expectedDefault: 'January 1, 2022',
 		expected: {
+			year: '2022',
+			month: 'January 2022',
 			hour: 'January 1, 2022 at 1 AM',
 			second: 'January 1, 2022 at 1 AM',
 			minute: 'January 1, 2022 at 1 AM',
@@ -1379,14 +1387,14 @@ const formatDateDisplaySecond: {
 		description: 'day, second resolution',
 		date: new Date('2022-01-02T00:00:00.000'),
 		expectedDefault: 'January 2, 2022',
-		expected: { month: '2022', year: '2022' },
+		expected: { month: 'January 2022', year: '2022' },
 		options: { dateResolution: 'second', boundary: 'inclusive' },
 	},
 	{
 		description: 'year, second resolution',
 		date: new Date('2022-01-01T00:00:00.000'),
-		expectedDefault: '2022',
-		expected: {},
+		expectedDefault: 'January 1, 2022',
+		expected: { year: '2022', month: 'January 2022' },
 		options: { dateResolution: 'second', boundary: 'inclusive' },
 	},
 	{

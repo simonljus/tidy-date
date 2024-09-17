@@ -426,12 +426,8 @@ export class DateFormatter {
 		boolean
 	> {
 		const displayResolution = this.displayResolution;
-		const showMonth =
-			fulfillsResolution(displayResolution, 'month') &&
-			!isStartOfYear(date, { resolution: displayResolution });
-		const showDay =
-			fulfillsResolution(displayResolution, 'day') &&
-			!isStartOfMonth(date, { resolution: displayResolution });
+		const showMonth = fulfillsResolution(displayResolution, 'month');
+		const showDay = fulfillsResolution(displayResolution, 'day');
 		const showHour =
 			fulfillsResolution(displayResolution, 'hour') &&
 			!isStartOfDay(date, { resolution: displayResolution });
