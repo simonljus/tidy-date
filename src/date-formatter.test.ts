@@ -4,7 +4,7 @@ import {
 	type RangeFormatOptions,
 	type RangeType,
 } from './date-formatter.js';
-import type { Resolution } from './utils.js';
+import { type Resolution, resolutions } from './utils.js';
 
 const today = new Date('2023-09-16T12:00:00.000');
 function joinDates(start: string, end: string) {
@@ -967,24 +967,16 @@ const permutations: {
 	{ testCases: formatDateRangeDisplayResolutionInclusiveDifferent },
 	{ testCases: formatDateRangeExclusive },
 ];
-const displayResolutions = [
-	'year',
-	'month',
-	'day',
-	'hour',
-	'minute',
-	'second',
-] as const;
 for (const permutation of permutations) {
-	describe.each(displayResolutions)(
+	describe.each(resolutions)(
 		'FDR inclusive range, display %s',
-		(displayResolution) => {
+		(resolution) => {
 			test.each(permutation.testCases)(
 				'$description',
 				({ from, to, options, expected, expectedDefault }) => {
 					const formatter = new DateFormatter({
 						...defaultOptions,
-						displayResolution,
+						displayResolution: resolution,
 						...options,
 					});
 					expect(
@@ -992,14 +984,14 @@ for (const permutation of permutations) {
 							timeZoneOptions:
 								defaultOptions.timeZoneOptions ?? options?.timeZoneOptions,
 						}),
-					).toBe(expected[displayResolution]?.type ?? expectedDefault.type);
+					).toBe(expected[resolution]?.type ?? expectedDefault.type);
 					expect(
 						formatter.formatRangeToday(from, to, {
 							...defaultOptions,
-							displayResolution,
+							displayResolution: resolution,
 							...options,
 						}),
-					).toBe(expected[displayResolution]?.range ?? expectedDefault.range);
+					).toBe(expected[resolution]?.range ?? expectedDefault.range);
 				},
 			);
 		},

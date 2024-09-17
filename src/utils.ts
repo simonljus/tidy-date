@@ -20,6 +20,7 @@ import {
 	monthStart,
 	offset,
 	removeOffset,
+	sameYear,
 	yearEnd,
 	yearStart,
 } from '@formkit/tempo';
@@ -38,23 +39,23 @@ export type Resolution = (typeof resolutions)[number];
 type Brand<B extends string> = Record<`__${B}`, B>;
 type Branded<T, B extends string> = T & Brand<B>;
 
-export type BoundedDate = Branded<Date, 'bounded'>;
-export type ZonedDate = Branded<Date, 'zoned'>;
+type BoundedDate = Branded<Date, 'bounded'>;
+type ZonedDate = Branded<Date, 'zoned'>;
 export type AdjustedDate = BoundedDate & ZonedDate;
 
+export function isSameYear(dateA: Date, dateB: Date) {
+	return sameYear(dateA, dateB);
+}
 export function isSameMonth(dateA: Date, dateB: Date) {
 	return diffDays(monthStart(dateA), monthStart(dateB)) === 0;
-}
-export function isSameYear(dateA: Date, dateB: Date) {
-	return diffDays(yearStart(dateA), yearStart(dateB)) === 0;
 }
 export function isSameDay(dateA: Date, dateB: Date) {
 	return diffHours(dayStart(dateA), dayStart(dateB)) === 0;
 }
-export function isSameMinute(dateA: Date, dateB: Date) {
+function isSameMinute(dateA: Date, dateB: Date) {
 	return diffMinutes(minuteStart(dateA), minuteStart(dateB)) === 0;
 }
-export function isSameSecond(dateA: Date, dateB: Date) {
+function isSameSecond(dateA: Date, dateB: Date) {
 	return diffSeconds(dateA, dateB) === 0;
 }
 
@@ -63,18 +64,18 @@ export function isSameSecond(dateA: Date, dateB: Date) {
  * @param date
  * @returns a Date object for the end of the given second
  */
-export function secondEnd(date: Date) {
+function secondEnd(date: Date) {
 	const copy = new Date(date);
 	copy.setMilliseconds(999);
 	return copy;
 }
-export function secondStart(date: Date) {
+function secondStart(date: Date) {
 	const copy = new Date(date);
 	copy.setMilliseconds(0);
 	return copy;
 }
 
-export function getStartOfQuarter(date: Date) {
+function getStartOfQuarter(date: Date) {
 	const clone = new Date(date);
 	const month = clone.getMonth();
 	for (let monthIndex = 0; monthIndex < 12; monthIndex += 3) {
@@ -85,7 +86,7 @@ export function getStartOfQuarter(date: Date) {
 	}
 	return monthStart(clone);
 }
-export function getEndOfQuarter(date: Date) {
+function getEndOfQuarter(date: Date) {
 	const clone = new Date(date);
 	const month = clone.getMonth();
 	for (let monthIndex = 2; monthIndex < 12; monthIndex += 3) {
@@ -181,13 +182,14 @@ export function isFullQuarters(
 	);
 }
 
-export function isStartOfQuarter(
+function isStartOfQuarter(
 	date: Date,
 	{ resolution }: { resolution: Resolution },
 ) {
 	return isSameDate(getStartOfQuarter(date), date, { resolution });
 }
-export function isEndOfQuarter(
+
+function isEndOfQuarter(
 	date: Date,
 	{ resolution }: { resolution: Resolution },
 ) {
