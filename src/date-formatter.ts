@@ -86,7 +86,34 @@ export class DateFormatter {
 		this.boundary = options?.boundary ?? 'inclusive';
 		this.onlyIntl = options?.onlyIntl ?? true;
 	}
+	public formatDate(
+		date: Date,
+		{
+			locale,
+			timeZoneOptions,
+		}: Pick<RangeFormatOptions, 'locale' | 'timeZoneOptions'>,
+	) {
+		const adjustedDate = this.adjustStartDate(date, {
+			timeZone: timeZoneOptions?.timeZone,
+		});
 
+		const { showMonth, showDay, showHour, showMinute, showSecond } =
+			this.getDatePartsToShow(adjustedDate);
+		const intlDate = this.adjustStartDateForDisplayIntl(adjustedDate, {
+			timeZone: timeZoneOptions?.timeZone,
+		});
+
+		return new Intl.DateTimeFormat(locale, {
+			month: showMonth ? 'long' : undefined,
+			year: 'numeric',
+			day: showDay ? 'numeric' : undefined,
+			hour: showHour ? 'numeric' : undefined,
+			minute: showMinute ? 'numeric' : undefined,
+			second: showSecond ? 'numeric' : undefined,
+			timeZone: timeZoneOptions?.timeZone,
+			timeZoneName: timeZoneOptions?.show ? 'short' : undefined,
+		}).format(intlDate);
+	}
 	public formatRange(
 		from: Date,
 		to: Date,
@@ -193,8 +220,8 @@ export class DateFormatter {
 		}).formatRange(fromIntl, toIntl);
 	}
 	private _getRangePartsToShowToday(
-		from: Date,
-		to: Date,
+		from: AdjustedDate,
+		to: AdjustedDate,
 		{ today }: { today: Date },
 	): Record<
 		| 'showHour'
@@ -357,16 +384,12 @@ export class DateFormatter {
 		return [fromQuarter, toQuarter].join('\u2009\u2013\u2009');
 	}
 	private getRangePartsToShow(
-		from: Date,
-		to: Date,
-		{ timeZoneOptions }: Pick<RangeFormatOptions, 'timeZoneOptions'> = {},
+		fromZoned: AdjustedDate,
+		toZoned: AdjustedDate,
 	): Record<
 		'showMonth' | 'showDay' | 'showHour' | 'showMinute' | 'showSecond',
 		boolean
 	> {
-		const { from: fromZoned, to: toZoned } = this.adjustDates(from, to, {
-			timeZone: timeZoneOptions?.timeZone,
-		});
 		const displayResolution = this.displayResolution;
 		const showMonth =
 			fulfillsResolution(displayResolution, 'month') &&
@@ -388,6 +411,37 @@ export class DateFormatter {
 			fulfillsResolution(displayResolution, 'second') &&
 			(!isStartOfMinute(fromZoned, { resolution: displayResolution }) ||
 				!isEndOfMinute(toZoned, { resolution: displayResolution }));
+		return {
+			showMonth,
+			showDay,
+			showHour,
+			showMinute,
+			showSecond,
+		};
+	}
+	private getDatePartsToShow(
+		date: AdjustedDate,
+	): Record<
+		'showMonth' | 'showDay' | 'showHour' | 'showMinute' | 'showSecond',
+		boolean
+	> {
+		const displayResolution = this.displayResolution;
+		const showMonth =
+			fulfillsResolution(displayResolution, 'month') &&
+			!isStartOfYear(date, { resolution: displayResolution });
+		const showDay =
+			fulfillsResolution(displayResolution, 'day') &&
+			!isStartOfMonth(date, { resolution: displayResolution });
+		const showHour =
+			fulfillsResolution(displayResolution, 'hour') &&
+			!isStartOfDay(date, { resolution: displayResolution });
+		const showMinute =
+			fulfillsResolution(displayResolution, 'minute') &&
+			!isStartOfHour(date, { resolution: displayResolution });
+
+		const showSecond =
+			fulfillsResolution(displayResolution, 'second') &&
+			!isStartOfMinute(date, { resolution: displayResolution });
 		return {
 			showMonth,
 			showDay,
