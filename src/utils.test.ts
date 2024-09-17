@@ -9,6 +9,12 @@ import {
 	isSameQuarter,
 	isSameSecond,
 	isSameYear,
+	isStartOfDay,
+	isStartOfHour,
+	isStartOfMinute,
+	isStartOfMonth,
+	isStartOfYear,
+	startOf,
 } from './utils.js';
 
 describe('same year', () => {
@@ -153,7 +159,7 @@ describe('same hour', () => {
 	test('different year, same hour', () => {
 		const from = new Date('2022-04-22T09:10:11.123');
 		const to = new Date('2023-04-22T09:34:56.123');
-		expect(isSameDay(from, to)).toBe(false);
+		expect(isSameHour(from, to)).toBe(false);
 	});
 	test('different month,same hour', () => {
 		const from = new Date('2023-04-05T09:10:11.123');
@@ -175,8 +181,8 @@ describe('same hour', () => {
 	test('same time', () => {
 		const from = new Date('2023-01-01T00:00:00.000');
 		const to = new Date('2023-12-31T23:59:59.999');
-		expect(isSameDay(from, from)).toBe(true);
-		expect(isSameDay(to, to)).toBe(true);
+		expect(isSameHour(from, from)).toBe(true);
+		expect(isSameHour(to, to)).toBe(true);
 	});
 });
 
@@ -213,7 +219,7 @@ describe('same minute', () => {
 		const from = new Date('2023-08-15T09:10:11.123');
 		const to = new Date('2023-08-16T09:10:11.123');
 
-		expect(isSameHour(from, to)).toBe(false);
+		expect(isSameMinute(from, to)).toBe(false);
 	});
 	test('different hour', () => {
 		const from = new Date('2023-08-15T09:10:11.123');
@@ -231,13 +237,13 @@ describe('same minute', () => {
 		const from = new Date('2023-08-16T09:01:11.123');
 		const to = new Date('2023-08-16T09:01:24.567');
 
-		expect(isSameHour(from, to)).toBe(true);
+		expect(isSameMinute(from, to)).toBe(true);
 	});
 	test('same time', () => {
 		const from = new Date('2023-01-01T00:00:00.000');
 		const to = new Date('2023-12-31T23:59:59.999');
-		expect(isSameDay(from, from)).toBe(true);
-		expect(isSameDay(to, to)).toBe(true);
+		expect(isSameMinute(from, from)).toBe(true);
+		expect(isSameMinute(to, to)).toBe(true);
 	});
 });
 
@@ -246,7 +252,7 @@ describe('same second', () => {
 		const from = new Date('2023-03-02T04:05:06.000');
 		const to = new Date('2023-03-02T04:05:06.999');
 
-		expect(isSameMinute(from, to)).toBe(true);
+		expect(isSameSecond(from, to)).toBe(true);
 	});
 	test('new second', () => {
 		const from = new Date('2023-04-02T11:05:06.999');
@@ -298,13 +304,13 @@ describe('same second', () => {
 		const from = new Date('2023-08-16T09:01:11.123');
 		const to = new Date('2023-08-16T09:01:11.567');
 
-		expect(isSameHour(from, to)).toBe(true);
+		expect(isSameSecond(from, to)).toBe(true);
 	});
 	test('same time', () => {
 		const from = new Date('2023-01-01T00:00:00.000');
 		const to = new Date('2023-12-31T23:59:59.999');
-		expect(isSameDay(from, from)).toBe(true);
-		expect(isSameDay(to, to)).toBe(true);
+		expect(isSameSecond(from, from)).toBe(true);
+		expect(isSameSecond(to, to)).toBe(true);
 	});
 });
 
@@ -433,5 +439,245 @@ describe('fulfills resolution', () => {
 		expect(fulfillsResolution('hour', 'second')).toBe(false);
 		expect(fulfillsResolution('minute', 'second')).toBe(false);
 		expect(fulfillsResolution('second', 'second')).toBe(true);
+	});
+});
+
+describe('start of year', () => {
+	test('year', () => {
+		const date = new Date('2023-02-03T01:02:03.456');
+		expect(isStartOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'month' })).toBe(false);
+		expect(isStartOfYear(date, { resolution: 'day' })).toBe(false);
+		expect(isStartOfYear(date, { resolution: 'hour' })).toBe(false);
+		expect(isStartOfYear(date, { resolution: 'minute' })).toBe(false);
+		expect(isStartOfYear(date, { resolution: 'second' })).toBe(false);
+	});
+	test('year, month', () => {
+		const date = new Date('2023-01-03T01:02:03.456');
+		expect(isStartOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'day' })).toBe(false);
+		expect(isStartOfYear(date, { resolution: 'hour' })).toBe(false);
+		expect(isStartOfYear(date, { resolution: 'minute' })).toBe(false);
+		expect(isStartOfYear(date, { resolution: 'second' })).toBe(false);
+	});
+	test('year, month,day', () => {
+		const date = new Date('2023-01-01T01:02:03.456');
+		expect(isStartOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'hour' })).toBe(false);
+		expect(isStartOfYear(date, { resolution: 'minute' })).toBe(false);
+		expect(isStartOfYear(date, { resolution: 'second' })).toBe(false);
+	});
+	test('year, month,day, hour', () => {
+		const date = new Date('2023-01-01T00:02:03.456');
+		expect(isStartOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'hour' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'minute' })).toBe(false);
+		expect(isStartOfYear(date, { resolution: 'second' })).toBe(false);
+	});
+	test('year, month,day, hour, minute', () => {
+		const date = new Date('2023-01-01T00:00:03.456');
+		expect(isStartOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'hour' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'minute' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'second' })).toBe(false);
+	});
+	test('year, month,day, hour, minute, second', () => {
+		const date = new Date('2023-01-01T00:00:00.456');
+		expect(isStartOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'hour' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'minute' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'second' })).toBe(true);
+	});
+	test('year, month,day, hour, minute, second,millisecond', () => {
+		const date = new Date('2023-01-01T00:00:00.000');
+		expect(isStartOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfYear(date, { resolution: 'year' })).toBe(true);
+	});
+});
+
+describe('start of month', () => {
+	test('month', () => {
+		const date = new Date('2023-02-03T01:02:03.456');
+		expect(isStartOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'day' })).toBe(false);
+		expect(isStartOfMonth(date, { resolution: 'hour' })).toBe(false);
+		expect(isStartOfMonth(date, { resolution: 'minute' })).toBe(false);
+		expect(isStartOfMonth(date, { resolution: 'second' })).toBe(false);
+	});
+	test('month,day', () => {
+		const date = new Date('2023-02-01T01:02:03.456');
+		expect(isStartOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'hour' })).toBe(false);
+		expect(isStartOfMonth(date, { resolution: 'minute' })).toBe(false);
+		expect(isStartOfMonth(date, { resolution: 'second' })).toBe(false);
+	});
+	test('month,day, hour', () => {
+		const date = new Date('2023-02-01T00:02:03.456');
+		expect(isStartOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'hour' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'minute' })).toBe(false);
+		expect(isStartOfMonth(date, { resolution: 'second' })).toBe(false);
+	});
+	test('month,day, hour, minute', () => {
+		const date = new Date('2023-02-01T00:00:03.456');
+		expect(isStartOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'hour' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'minute' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'second' })).toBe(false);
+	});
+	test('month,day, hour, minute, second', () => {
+		const date = new Date('2023-02-01T00:00:00.456');
+		expect(isStartOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'hour' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'minute' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'second' })).toBe(true);
+	});
+	test('month,day, hour, minute, second,millisecond', () => {
+		const date = new Date('2023-02-01T00:00:00.000');
+		expect(isStartOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMonth(date, { resolution: 'year' })).toBe(true);
+	});
+});
+
+describe('start of day', () => {
+	test('day', () => {
+		const date = new Date('2023-02-03T01:02:03.456');
+		expect(isStartOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'hour' })).toBe(false);
+		expect(isStartOfDay(date, { resolution: 'minute' })).toBe(false);
+		expect(isStartOfDay(date, { resolution: 'second' })).toBe(false);
+	});
+	test('day, hour', () => {
+		const date = new Date('2023-02-03T00:02:03.456');
+		expect(isStartOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'hour' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'minute' })).toBe(false);
+		expect(isStartOfDay(date, { resolution: 'second' })).toBe(false);
+	});
+	test('day, hour, minute', () => {
+		const date = new Date('2023-02-03T00:00:03.456');
+		expect(isStartOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'hour' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'minute' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'second' })).toBe(false);
+	});
+	test('day, hour, minute, second', () => {
+		const date = new Date('2023-02-03T00:00:00.456');
+		expect(isStartOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'hour' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'minute' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'second' })).toBe(true);
+	});
+	test('day, hour, minute, second,millisecond', () => {
+		const date = new Date('2023-02-03T00:00:00.000');
+		expect(isStartOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfDay(date, { resolution: 'year' })).toBe(true);
+	});
+});
+
+describe('start of hour', () => {
+	test('hour', () => {
+		const date = new Date('2023-02-03T04:01:03.456');
+		expect(isStartOfHour(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'hour' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'minute' })).toBe(false);
+		expect(isStartOfHour(date, { resolution: 'second' })).toBe(false);
+	});
+	test('hour, minute', () => {
+		const date = new Date('2023-02-03T04:00:03.456');
+		expect(isStartOfHour(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'hour' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'minute' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'second' })).toBe(false);
+	});
+	test('hour, minute, second', () => {
+		const date = new Date('2023-02-03T04:00:00.456');
+		expect(isStartOfHour(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'hour' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'minute' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'second' })).toBe(true);
+	});
+	test('hour, minute, second,millisecond', () => {
+		const date = new Date('2023-02-03T04:00:00.000');
+		expect(isStartOfHour(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfHour(date, { resolution: 'year' })).toBe(true);
+	});
+});
+
+describe('start of minute', () => {
+	test('hour, minute', () => {
+		const date = new Date('2023-02-03T04:01:03.456');
+		expect(isStartOfMinute(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'hour' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'minute' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'second' })).toBe(false);
+	});
+	test('minute, second', () => {
+		const date = new Date('2023-02-03T04:01:00.456');
+		expect(isStartOfMinute(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'hour' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'minute' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'second' })).toBe(true);
+	});
+	test('minute, second,millisecond', () => {
+		const date = new Date('2023-02-03T04:01:00.000');
+		expect(isStartOfMinute(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'year' })).toBe(true);
 	});
 });
