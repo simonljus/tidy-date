@@ -4,6 +4,7 @@ import {
 	getQuarter,
 	isEndOfDay,
 	isEndOfHour,
+	isEndOfMinute,
 	isEndOfMonth,
 	isEndOfYear,
 	isSameDay,
@@ -887,10 +888,40 @@ describe('start of minute', () => {
 	test('minute, second,millisecond', () => {
 		const date = new Date('2023-02-03T04:01:00.000');
 		expect(isStartOfMinute(date, { resolution: 'year' })).toBe(true);
-		expect(isStartOfMinute(date, { resolution: 'year' })).toBe(true);
-		expect(isStartOfMinute(date, { resolution: 'year' })).toBe(true);
-		expect(isStartOfMinute(date, { resolution: 'year' })).toBe(true);
-		expect(isStartOfMinute(date, { resolution: 'year' })).toBe(true);
-		expect(isStartOfMinute(date, { resolution: 'year' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'month' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'day' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'hour' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'minute' })).toBe(true);
+		expect(isStartOfMinute(date, { resolution: 'second' })).toBe(true);
+	});
+});
+
+describe('end of minute', () => {
+	test('hour, minute', () => {
+		const date = new Date('2023-02-03T04:01:03.456');
+		expect(isEndOfMinute(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfMinute(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfMinute(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfMinute(date, { resolution: 'hour' })).toBe(true);
+		expect(isEndOfMinute(date, { resolution: 'minute' })).toBe(true);
+		expect(isEndOfMinute(date, { resolution: 'second' })).toBe(false);
+	});
+	test('minute, second', () => {
+		const date = new Date('2023-02-03T04:01:59.456');
+		expect(isEndOfMinute(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfMinute(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfMinute(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfMinute(date, { resolution: 'hour' })).toBe(true);
+		expect(isEndOfMinute(date, { resolution: 'minute' })).toBe(true);
+		expect(isEndOfMinute(date, { resolution: 'second' })).toBe(true);
+	});
+	test('minute, second,millisecond', () => {
+		const date = new Date('2023-02-03T04:01:59.999');
+		expect(isEndOfMinute(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfMinute(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfMinute(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfMinute(date, { resolution: 'hour' })).toBe(true);
+		expect(isEndOfMinute(date, { resolution: 'minute' })).toBe(true);
+		expect(isEndOfMinute(date, { resolution: 'second' })).toBe(true);
 	});
 });
