@@ -2,6 +2,8 @@ import { describe, expect, test } from 'vitest';
 import {
 	fulfillsResolution,
 	getQuarter,
+	isEndOfMonth,
+	isEndOfYear,
 	isSameDay,
 	isSameHour,
 	isSameMinute,
@@ -14,7 +16,6 @@ import {
 	isStartOfMinute,
 	isStartOfMonth,
 	isStartOfYear,
-	startOf,
 } from './utils.js';
 
 describe('same year', () => {
@@ -508,6 +509,72 @@ describe('start of year', () => {
 	});
 });
 
+describe('end of year', () => {
+	test('year', () => {
+		const date = new Date('2023-02-03T01:02:03.456');
+		expect(isEndOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'month' })).toBe(false);
+		expect(isEndOfYear(date, { resolution: 'day' })).toBe(false);
+		expect(isEndOfYear(date, { resolution: 'hour' })).toBe(false);
+		expect(isEndOfYear(date, { resolution: 'minute' })).toBe(false);
+		expect(isEndOfYear(date, { resolution: 'second' })).toBe(false);
+	});
+	test('year, month', () => {
+		const date = new Date('2023-12-03T01:02:03.456');
+		expect(isEndOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'day' })).toBe(false);
+		expect(isEndOfYear(date, { resolution: 'hour' })).toBe(false);
+		expect(isEndOfYear(date, { resolution: 'minute' })).toBe(false);
+		expect(isEndOfYear(date, { resolution: 'second' })).toBe(false);
+	});
+	test('year, month,day', () => {
+		const date = new Date('2023-12-31T01:02:03.456');
+		expect(isEndOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'hour' })).toBe(false);
+		expect(isEndOfYear(date, { resolution: 'minute' })).toBe(false);
+		expect(isEndOfYear(date, { resolution: 'second' })).toBe(false);
+	});
+	test('year, month,day, hour', () => {
+		const date = new Date('2023-12-31T23:02:03.456');
+		expect(isEndOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'hour' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'minute' })).toBe(false);
+		expect(isEndOfYear(date, { resolution: 'second' })).toBe(false);
+	});
+	test('year, month,day, hour, minute', () => {
+		const date = new Date('2023-12-31T23:59:03.456');
+		expect(isEndOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'hour' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'minute' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'second' })).toBe(false);
+	});
+	test('year, month,day, hour, minute, second', () => {
+		const date = new Date('2023-12-31T23:59:59.456');
+		expect(isEndOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'hour' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'minute' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'second' })).toBe(true);
+	});
+	test('year, month,day, hour, minute, second,millisecond', () => {
+		const date = new Date('2023-12-31T23:59:59.999');
+		expect(isEndOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfYear(date, { resolution: 'year' })).toBe(true);
+	});
+});
+
 describe('start of month', () => {
 	test('month', () => {
 		const date = new Date('2023-02-03T01:02:03.456');
@@ -562,6 +629,63 @@ describe('start of month', () => {
 		expect(isStartOfMonth(date, { resolution: 'year' })).toBe(true);
 		expect(isStartOfMonth(date, { resolution: 'year' })).toBe(true);
 		expect(isStartOfMonth(date, { resolution: 'year' })).toBe(true);
+	});
+});
+
+describe('end of month', () => {
+	test('month', () => {
+		const date = new Date('2023-03-04T01:02:03.456');
+		expect(isEndOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'day' })).toBe(false);
+		expect(isEndOfMonth(date, { resolution: 'hour' })).toBe(false);
+		expect(isEndOfMonth(date, { resolution: 'minute' })).toBe(false);
+		expect(isEndOfMonth(date, { resolution: 'second' })).toBe(false);
+	});
+	test('month,day', () => {
+		const date = new Date('2023-03-31T01:02:03.456');
+		expect(isEndOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'hour' })).toBe(false);
+		expect(isEndOfMonth(date, { resolution: 'minute' })).toBe(false);
+		expect(isEndOfMonth(date, { resolution: 'second' })).toBe(false);
+	});
+	test('month day, hour', () => {
+		const date = new Date('2023-03-31T23:02:03.456');
+		expect(isEndOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'hour' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'minute' })).toBe(false);
+		expect(isEndOfMonth(date, { resolution: 'second' })).toBe(false);
+	});
+	test('month,day, hour, minute', () => {
+		const date = new Date('2023-03-31T23:59:03.456');
+		expect(isEndOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'hour' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'minute' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'second' })).toBe(false);
+	});
+	test('month,day, hour, minute, second', () => {
+		const date = new Date('2023-03-31T23:59:59.456');
+		expect(isEndOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'hour' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'minute' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'second' })).toBe(true);
+	});
+	test('month,day, hour, minute, second,millisecond', () => {
+		const date = new Date('2023-03-31T23:59:59.999');
+		expect(isEndOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfMonth(date, { resolution: 'year' })).toBe(true);
 	});
 });
 
