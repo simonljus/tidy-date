@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest';
 import {
 	fulfillsResolution,
 	getQuarter,
+	isEndOfDay,
 	isEndOfMonth,
 	isEndOfYear,
 	isSameDay,
@@ -734,6 +735,54 @@ describe('start of day', () => {
 		expect(isStartOfDay(date, { resolution: 'year' })).toBe(true);
 		expect(isStartOfDay(date, { resolution: 'year' })).toBe(true);
 		expect(isStartOfDay(date, { resolution: 'year' })).toBe(true);
+	});
+});
+
+describe('end of day', () => {
+	test('day', () => {
+		const date = new Date('2023-02-03T01:02:03.456');
+		expect(isEndOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'hour' })).toBe(false);
+		expect(isEndOfDay(date, { resolution: 'minute' })).toBe(false);
+		expect(isEndOfDay(date, { resolution: 'second' })).toBe(false);
+	});
+	test('day, hour', () => {
+		const date = new Date('2023-02-03T23:02:03.456');
+		expect(isEndOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'hour' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'minute' })).toBe(false);
+		expect(isEndOfDay(date, { resolution: 'second' })).toBe(false);
+	});
+	test('day, hour, minute', () => {
+		const date = new Date('2023-02-03T23:59:03.456');
+		expect(isEndOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'hour' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'minute' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'second' })).toBe(false);
+	});
+	test('day, hour, minute, second', () => {
+		const date = new Date('2023-02-03T23:59:59.456');
+		expect(isEndOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'month' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'day' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'hour' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'minute' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'second' })).toBe(true);
+	});
+	test('day, hour, minute, second,millisecond', () => {
+		const date = new Date('2023-02-03T23:59:59.999');
+		expect(isEndOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'year' })).toBe(true);
+		expect(isEndOfDay(date, { resolution: 'year' })).toBe(true);
 	});
 });
 
