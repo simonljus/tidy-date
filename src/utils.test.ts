@@ -4,6 +4,7 @@ import {
 	isSameHour,
 	isSameMinute,
 	isSameMonth,
+	isSameQuarter,
 	isSameSecond,
 	isSameYear,
 } from './utils.js';
@@ -296,6 +297,72 @@ describe('same second', () => {
 		const to = new Date('2023-08-16T09:01:11.567');
 
 		expect(isSameHour(from, to)).toBe(true);
+	});
+	test('same time', () => {
+		const from = new Date('2023-01-01T00:00:00.000');
+		const to = new Date('2023-12-31T23:59:59.999');
+		expect(isSameDay(from, from)).toBe(true);
+		expect(isSameDay(to, to)).toBe(true);
+	});
+});
+
+describe('same quarter', () => {
+	test('start end', () => {
+		const from = new Date('2023-04-01T00:00:00.000');
+		const to = new Date('2023-06-30T23:59:59.999');
+
+		expect(isSameQuarter(from, to)).toBe(true);
+	});
+	test('new quarter', () => {
+		const from = new Date('2023-03-31T23:59:59.999');
+		const to = new Date('2023-04-01T00:00:00.000');
+
+		expect(isSameQuarter(from, to)).toBe(false);
+	});
+	test('different dates', () => {
+		const from = new Date('2022-08-20T12:34:56.123');
+		const to = new Date('2023-04-15T09:10:11.346');
+
+		expect(isSameQuarter(from, to)).toBe(false);
+	});
+	test('different year', () => {
+		const from = new Date('2022-04-22T09:10:11.123');
+		const to = new Date('2023-04-22T09:10:11.123');
+		expect(isSameQuarter(from, to)).toBe(false);
+	});
+	test('different month,same quarter', () => {
+		const from = new Date('2023-05-05T09:10:11.123');
+		const to = new Date('2023-06-05T09:10:11.123');
+		expect(isSameSecond(from, to)).toBe(false);
+	});
+	test('different month,different quarter', () => {
+		const from = new Date('2023-04-05T09:10:11.123');
+		const to = new Date('2023-07-05T09:10:11.123');
+		expect(isSameSecond(from, to)).toBe(false);
+	});
+	test('different day', () => {
+		const from = new Date('2023-08-15T09:10:11.123');
+		const to = new Date('2023-08-16T09:10:11.123');
+
+		expect(isSameQuarter(from, to)).toBe(true);
+	});
+	test('different hour', () => {
+		const from = new Date('2023-08-15T09:10:11.123');
+		const to = new Date('2023-08-15T10:10:11.123');
+
+		expect(isSameQuarter(from, to)).toBe(true);
+	});
+	test('different minute', () => {
+		const from = new Date('2023-08-15T10:09:11.123');
+		const to = new Date('2023-08-15T10:10:11.123');
+
+		expect(isSameQuarter(from, to)).toBe(true);
+	});
+	test('different second', () => {
+		const from = new Date('2023-08-15T10:10:11.123');
+		const to = new Date('2023-08-15T10:10:12.123');
+
+		expect(isSameQuarter(from, to)).toBe(true);
 	});
 	test('same time', () => {
 		const from = new Date('2023-01-01T00:00:00.000');
