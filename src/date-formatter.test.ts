@@ -3,8 +3,8 @@ import {
 	DateFormatter,
 	type RangeFormatOptions,
 	type RangeType,
-	type Resolution,
 } from './date-formatter.js';
+import type { Resolution } from './utils.js';
 
 const today = new Date('2023-09-16T12:00:00.000');
 function joinDates(start: string, end: string) {
