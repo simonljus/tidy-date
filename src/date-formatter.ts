@@ -1,46 +1,34 @@
 import {
-	addDay,
-	addHour,
-	addMinute,
-	addMonth,
-	addSecond,
-	addYear,
-	applyOffset,
-	dayEnd,
-	dayStart,
-	hourEnd,
-	hourStart,
-	minuteEnd,
-	minuteStart,
-	monthEnd,
-	monthStart,
-	offset,
-	removeOffset,
-	yearEnd,
-	yearStart,
-} from '@formkit/tempo';
-import {
-	getEndOfQuarter,
+	type AdjustedDate,
+	type Resolution,
+	addResolution,
+	endOf,
+	fulfillsResolution,
 	getQuarter,
-	getStartOfQuarter,
+	isEndOfDay,
+	isEndOfHour,
+	isEndOfMinute,
+	isEndOfMonth,
+	isEndOfYear,
+	isFullMonths,
+	isFullQuarters,
+	isFullYears,
+	isSameDate,
 	isSameDay,
-	isSameMinute,
 	isSameMonth,
 	isSameQuarter,
-	isSameSecond,
 	isSameYear,
-	secondEnd,
-	secondStart,
+	isStartOfDay,
+	isStartOfHour,
+	isStartOfMinute,
+	isStartOfMonth,
+	isStartOfYear,
+	lowerResolution,
+	removeZoned,
+	startOf,
+	toZonedDate,
 } from './utils.js';
 
-export const resolutions = [
-	'year',
-	'month',
-	'day',
-	'hour',
-	'minute',
-	'second',
-] as const;
 const rangeTypes = [
 	'fullYears',
 	'fullQuarters',
@@ -49,13 +37,7 @@ const rangeTypes = [
 	'sameMonth',
 	'sameYear',
 ] as const;
-type Brand<B extends string> = Record<`__${B}`, B>;
-type Branded<T, B extends string> = T & Brand<B>;
 
-type BoundedDate = Branded<Date, 'bounded'>;
-type ZonedDate = Branded<Date, 'zoned'>;
-type AdjustedDate = BoundedDate & ZonedDate;
-export type Resolution = (typeof resolutions)[number];
 export type RangeType = (typeof rangeTypes)[number];
 export type RangeFormatOptions = {
 	/**
@@ -84,217 +66,6 @@ export type RangeFormatOptions = {
 	 */
 	boundary?: 'inclusive' | 'exclusive';
 };
-
-function fulfillsResolution(
-	resolution: Resolution,
-	resolutionToFulfill: Resolution,
-) {
-	return (
-		resolutions.indexOf(resolution) >= resolutions.indexOf(resolutionToFulfill)
-	);
-}
-/**
- * Example Jan 1 yearA - Dec 31 yearB
- * @param from
- * @param to
- * @returns
- */
-function isFullYears(
-	from: Date,
-	to: Date,
-	{ resolution }: { resolution: Resolution },
-): boolean {
-	return isStartOfYear(from, { resolution }) && isEndOfYear(to, { resolution });
-}
-function isStartOfYear(
-	date: Date,
-	{ resolution }: { resolution: Resolution },
-): boolean {
-	return isSameDate(yearStart(date), date, { resolution });
-}
-function isEndOfYear(
-	date: Date,
-	{ resolution }: { resolution: Resolution },
-): boolean {
-	return isSameDate(yearEnd(date), date, { resolution });
-}
-function isSameDate(
-	dateA: Date,
-	dateB: Date,
-	{ resolution }: { resolution: Resolution },
-): boolean {
-	switch (resolution) {
-		case 'year': {
-			return isSameYear(dateA, dateB);
-		}
-		case 'month': {
-			return isSameMonth(dateA, dateB);
-		}
-		case 'day': {
-			return isSameDay(dateA, dateB);
-		}
-		case 'hour': {
-			return isSameSecond(dateA, dateB);
-		}
-		case 'minute': {
-			return isSameMinute(dateA, dateB);
-		}
-		case 'second': {
-			return isSameSecond(dateA, dateB);
-		}
-	}
-}
-/**
- * Example Apr 1 yearA - Sep 30 yearB
- * @param from
- * @param to
- * @returns
- */
-function isFullQuarters(
-	from: Date,
-	to: Date,
-	{ resolution }: { resolution: Resolution },
-) {
-	return (
-		isStartOfQuarter(from, { resolution }) && isEndOfQuarter(to, { resolution })
-	);
-}
-
-function isStartOfQuarter(
-	date: Date,
-	{ resolution }: { resolution: Resolution },
-) {
-	return isSameDate(getStartOfQuarter(date), date, { resolution });
-}
-function isEndOfQuarter(
-	date: Date,
-	{ resolution }: { resolution: Resolution },
-) {
-	return isSameDate(getEndOfQuarter(date), date, { resolution });
-}
-function isFullMonths(
-	from: Date,
-	to: Date,
-	{ resolution }: { resolution: Resolution },
-) {
-	return (
-		isStartOfMonth(from, { resolution }) && isEndOfMonth(to, { resolution })
-	);
-}
-function isStartOfMonth(
-	date: Date,
-	{ resolution }: { resolution: Resolution },
-) {
-	return isSameDate(monthStart(date), date, { resolution });
-}
-
-function isEndOfMonth(
-	date: Date,
-	{ resolution }: { resolution: Resolution },
-): boolean {
-	return isSameDate(monthEnd(date), date, { resolution });
-}
-
-function toZonedDate(date: Date, timeZone: string | undefined) {
-	if (!timeZone) {
-		return date as ZonedDate;
-	}
-	const offsetToTimezone = offset(date, timeZone);
-	const adjusted = removeOffset(date, offsetToTimezone);
-	return adjusted as ZonedDate;
-}
-
-function startOf(date: Date, resolution: Resolution) {
-	switch (resolution) {
-		case 'year':
-			return yearStart(date);
-		case 'month':
-			return monthStart(date);
-		case 'day':
-			return dayStart(date);
-		case 'hour':
-			return hourStart(date);
-		case 'minute':
-			return minuteStart(date);
-		case 'second':
-			return secondStart(date);
-	}
-}
-function endOf(date: Date, resolution: Resolution) {
-	switch (resolution) {
-		case 'year':
-			return yearEnd(date);
-		case 'month':
-			return monthEnd(date);
-		case 'day':
-			return dayEnd(date);
-		case 'hour':
-			return hourEnd(date);
-		case 'minute':
-			return minuteEnd(date);
-		case 'second':
-			return secondEnd(date);
-	}
-}
-
-function lowerResolution(resolution: Resolution) {
-	const foundIndex = resolutions.indexOf(resolution);
-	const adjustedIndex = foundIndex ? foundIndex - 1 : foundIndex;
-	const lowered = resolutions[adjustedIndex] ?? resolutions[0];
-	return lowered;
-}
-function addResolution(date: Date, resolution: Resolution, amount: number) {
-	switch (resolution) {
-		case 'year':
-			return addYear(date, amount);
-		case 'month':
-			return addMonth(date, amount);
-		case 'day':
-			return addDay(date, amount);
-		case 'hour':
-			return addHour(date, amount);
-		case 'minute':
-			return addMinute(date, amount);
-		case 'second':
-			return addSecond(date, amount);
-	}
-}
-
-function isStartOfDay(date: Date, { resolution }: { resolution: Resolution }) {
-	return isSameDate(dayStart(date), date, { resolution });
-}
-
-function isStartOfHour(date: Date, { resolution }: { resolution: Resolution }) {
-	return isSameDate(hourStart(date), date, { resolution });
-}
-function isStartOfMinute(
-	date: Date,
-	{ resolution }: { resolution: Resolution },
-) {
-	return isSameDate(minuteStart(date), date, { resolution });
-}
-function isEndOfHour(date: Date, { resolution }: { resolution: Resolution }) {
-	return isSameDate(hourEnd(date), date, { resolution });
-}
-function isEndOfMinute(date: Date, { resolution }: { resolution: Resolution }) {
-	return isSameDate(minuteEnd(date), date, { resolution });
-}
-
-function isEndOfDay(date: Date, { resolution }: { resolution: Resolution }) {
-	return isSameDate(dayEnd(date), date, { resolution });
-}
-function removeZoned({
-	originalDate,
-	zonedDate,
-	timeZone,
-}: { originalDate: Date; zonedDate: ZonedDate; timeZone: string | undefined }) {
-	if (!timeZone) {
-		return zonedDate;
-	}
-	const offsetToTimezone = offset(originalDate, timeZone);
-	return applyOffset(zonedDate, offsetToTimezone);
-}
-
 export class DateFormatter {
 	private dateResolution: Resolution;
 	private displayResolution: Resolution;
