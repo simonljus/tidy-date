@@ -1259,6 +1259,169 @@ const formatDateDisplayHour: {
 		options: { dateResolution: 'hour', boundary: 'inclusive' },
 	},
 ];
+const formatDateDisplayMinute: {
+	description: string;
+	date: Date;
+	options?: Partial<RangeFormatOptions>;
+	expectedDefault: string;
+	expected: Partial<Record<Resolution, string>>;
+}[] = [
+	{
+		description: 'year, minute resolution',
+		date: new Date('2022-01-01T00:00:00.000'),
+		expectedDefault: '2022',
+		expected: {},
+		options: { dateResolution: 'minute', boundary: 'inclusive' },
+	},
+	{
+		description: 'year month, minute resolution',
+		date: new Date('2022-02-03T00:00:00.000'),
+		expectedDefault: 'February 3, 2022',
+		expected: { year: '2022', month: 'February 2022' },
+		options: { dateResolution: 'minute', boundary: 'inclusive' },
+	},
+	{
+		description: 'year month day, minute resolution',
+		date: new Date('2022-02-03T00:00:00.000'),
+		expectedDefault: 'February 3, 2022',
+		expected: { year: '2022', month: 'February 2022' },
+		options: { dateResolution: 'minute', boundary: 'inclusive' },
+	},
+	{
+		description: 'year month day, minute resolution',
+		date: new Date('2022-02-03T00:00:00.000'),
+		expectedDefault: 'February 3, 2022',
+		expected: { year: '2022', month: 'February 2022' },
+		options: { dateResolution: 'minute', boundary: 'inclusive' },
+	},
+	{
+		description: 'year month day hour, minute resolution',
+		date: new Date('2022-02-03T01:00:00.000'),
+		expectedDefault: 'February 3, 2022 at 1 AM',
+		expected: { year: '2022', month: 'February 2022', day: 'February 3, 2022' },
+		options: { dateResolution: 'minute', boundary: 'inclusive' },
+	},
+	{
+		description: 'year month day hour minute, minute resolution',
+		date: new Date('2022-02-03T01:02:00.000'),
+		expectedDefault: 'February 3, 2022 at 1:02 AM',
+		expected: {
+			year: '2022',
+			month: 'February 2022',
+			day: 'February 3, 2022',
+			hour: 'February 3, 2022 at 1 AM',
+		},
+		options: { dateResolution: 'minute', boundary: 'inclusive' },
+	},
+	{
+		description: 'year month day hour minute second, minute resolution',
+		date: new Date('2022-02-03T01:02:03.000'),
+		expectedDefault: 'February 3, 2022 at 1:02 AM',
+		expected: {
+			year: '2022',
+			month: 'February 2022',
+			day: 'February 3, 2022',
+			hour: 'February 3, 2022 at 1 AM',
+		},
+		options: { dateResolution: 'minute', boundary: 'inclusive' },
+	},
+	{
+		description:
+			'year month day hour minute second millisecond, minute resolution',
+		date: new Date('2022-02-03T01:02:03.123'),
+		expectedDefault: 'February 3, 2022 at 1:02 AM',
+		expected: {
+			year: '2022',
+			month: 'February 2022',
+			day: 'February 3, 2022',
+			hour: 'February 3, 2022 at 1 AM',
+		},
+		options: { dateResolution: 'minute', boundary: 'inclusive' },
+	},
+];
+
+const formatDateDisplaySecond: {
+	description: string;
+	date: Date;
+	options?: Partial<RangeFormatOptions>;
+	expectedDefault: string;
+	expected: Partial<Record<Resolution, string>>;
+}[] = [
+	{
+		description: 'year, second resolution',
+		date: new Date('2022-01-01T00:00:00.000'),
+		expectedDefault: '2022',
+		expected: {},
+		options: { dateResolution: 'second', boundary: 'inclusive' },
+	},
+	{
+		description: 'year month, second resolution',
+		date: new Date('2022-02-03T00:00:00.000'),
+		expectedDefault: 'February 3, 2022',
+		expected: { year: '2022', month: 'February 2022' },
+		options: { dateResolution: 'second', boundary: 'inclusive' },
+	},
+	{
+		description: 'year month day, second resolution',
+		date: new Date('2022-02-03T00:00:00.000'),
+		expectedDefault: 'February 3, 2022',
+		expected: { year: '2022', month: 'February 2022' },
+		options: { dateResolution: 'second', boundary: 'inclusive' },
+	},
+	{
+		description: 'year month day, second resolution',
+		date: new Date('2022-02-03T00:00:00.000'),
+		expectedDefault: 'February 3, 2022',
+		expected: { year: '2022', month: 'February 2022' },
+		options: { dateResolution: 'second', boundary: 'inclusive' },
+	},
+	{
+		description: 'year month day hour, second resolution',
+		date: new Date('2022-02-03T01:00:00.000'),
+		expectedDefault: 'February 3, 2022 at 1 AM',
+		expected: { year: '2022', month: 'February 2022', day: 'February 3, 2022' },
+		options: { dateResolution: 'second', boundary: 'inclusive' },
+	},
+	{
+		description: 'year month day hour minute, second resolution',
+		date: new Date('2022-02-03T01:02:00.000'),
+		expectedDefault: 'February 3, 2022 at 1:02 AM',
+		expected: {
+			year: '2022',
+			month: 'February 2022',
+			day: 'February 3, 2022',
+			hour: 'February 3, 2022 at 1 AM',
+		},
+		options: { dateResolution: 'second', boundary: 'inclusive' },
+	},
+	{
+		description: 'year month day hour minute second, second resolution',
+		date: new Date('2022-02-03T01:02:03.000'),
+		expectedDefault: 'February 3, 2022 at 1:02:03 AM',
+		expected: {
+			year: '2022',
+			month: 'February 2022',
+			day: 'February 3, 2022',
+			hour: 'February 3, 2022 at 1 AM',
+			minute: 'February 3, 2022 at 1:02 AM',
+		},
+		options: { dateResolution: 'second', boundary: 'inclusive' },
+	},
+	{
+		description:
+			'year month day hour minute second millisecond, second resolution',
+		date: new Date('2022-02-03T01:02:03.123'),
+		expectedDefault: 'February 3, 2022 at 1:02:03 AM',
+		expected: {
+			year: '2022',
+			month: 'February 2022',
+			day: 'February 3, 2022',
+			hour: 'February 3, 2022 at 1 AM',
+			minute: 'February 3, 2022 at 1:02 AM',
+		},
+		options: { dateResolution: 'second', boundary: 'inclusive' },
+	},
+];
 const datePermutations: {
 	testCases: {
 		description: string;
@@ -1272,6 +1435,8 @@ const datePermutations: {
 	{ testCases: formatDateDisplayMonth },
 	{ testCases: formatDateDisplayDay },
 	{ testCases: formatDateDisplayHour },
+	{ testCases: formatDateDisplayMinute },
+	{ testCases: formatDateDisplaySecond },
 ];
 for (const permutation of datePermutations) {
 	describe.each(resolutions)(
