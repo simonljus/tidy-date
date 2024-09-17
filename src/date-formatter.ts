@@ -5,14 +5,12 @@ import {
 	endOf,
 	fulfillsResolution,
 	getQuarter,
+	getRangeType,
 	isEndOfDay,
 	isEndOfHour,
 	isEndOfMinute,
 	isEndOfMonth,
 	isEndOfYear,
-	isFullMonths,
-	isFullQuarters,
-	isFullYears,
 	isSameDate,
 	isSameDay,
 	isSameMonth,
@@ -268,30 +266,9 @@ export class DateFormatter {
 		const { from: fromZoned, to: toZoned } = this.adjustDates(from, to, {
 			timeZone: options?.timeZoneOptions?.timeZone,
 		});
-		const sameDay = isSameDay(fromZoned, toZoned);
-		const sameMonth = isSameMonth(fromZoned, toZoned);
-		const sameYear = isSameYear(fromZoned, toZoned);
-
-		const displayResolution = this.displayResolution;
-		if (isFullYears(fromZoned, toZoned, { resolution: displayResolution })) {
-			return 'fullYears';
-		}
-		if (isFullQuarters(fromZoned, toZoned, { resolution: displayResolution })) {
-			return 'fullQuarters';
-		}
-		if (isFullMonths(fromZoned, toZoned, { resolution: displayResolution })) {
-			return 'fullMonths';
-		}
-		if (sameDay && fulfillsResolution(displayResolution, 'day')) {
-			return 'sameDay';
-		}
-		if (sameMonth && fulfillsResolution(displayResolution, 'month')) {
-			return 'sameMonth';
-		}
-		if (sameYear) {
-			return 'sameYear';
-		}
-		return undefined;
+		return getRangeType(fromZoned, toZoned, {
+			resolution: this.displayResolution,
+		});
 	}
 
 	private adjustStartDate(

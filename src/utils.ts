@@ -124,7 +124,7 @@ export function fulfillsResolution(
  * @param to
  * @returns
  */
-export function isFullYears(
+function isFullYears(
 	from: Date,
 	to: Date,
 	{ resolution }: { resolution: Resolution },
@@ -175,7 +175,7 @@ export function isSameDate(
  * @param to
  * @returns
  */
-export function isFullQuarters(
+function isFullQuarters(
 	from: Date,
 	to: Date,
 	{ resolution }: { resolution: Resolution },
@@ -198,7 +198,7 @@ function isEndOfQuarter(
 ) {
 	return isSameDate(getEndOfQuarter(date), date, { resolution });
 }
-export function isFullMonths(
+function isFullMonths(
 	from: Date,
 	to: Date,
 	{ resolution }: { resolution: Resolution },
@@ -339,4 +339,34 @@ export function removeZoned({
 	}
 	const offsetToTimezone = offset(originalDate, timeZone);
 	return applyOffset(zonedDate, offsetToTimezone);
+}
+export function getRangeType(
+	from: Date,
+	to: Date,
+	options: { resolution: Resolution },
+) {
+	const { resolution } = options;
+
+	const sameDay = isSameDay(from, to);
+	const sameMonth = isSameMonth(from, to);
+	const sameYear = isSameYear(from, to);
+	if (isFullYears(from, to, { resolution })) {
+		return 'fullYears';
+	}
+	if (isFullQuarters(from, to, { resolution: resolution })) {
+		return 'fullQuarters';
+	}
+	if (isFullMonths(from, to, { resolution: resolution })) {
+		return 'fullMonths';
+	}
+	if (sameDay && fulfillsResolution(resolution, 'day')) {
+		return 'sameDay';
+	}
+	if (sameMonth && fulfillsResolution(resolution, 'month')) {
+		return 'sameMonth';
+	}
+	if (sameYear) {
+		return 'sameYear';
+	}
+	return undefined;
 }
