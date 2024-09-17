@@ -19,6 +19,7 @@ import {
 	isStartOfMinute,
 	isStartOfMonth,
 	isStartOfYear,
+	lowerResolution,
 } from './utils.js';
 
 describe('same year', () => {
@@ -923,5 +924,16 @@ describe('end of minute', () => {
 		expect(isEndOfMinute(date, { resolution: 'hour' })).toBe(true);
 		expect(isEndOfMinute(date, { resolution: 'minute' })).toBe(true);
 		expect(isEndOfMinute(date, { resolution: 'second' })).toBe(true);
+	});
+});
+
+describe('lower resolution', () => {
+	test('lower one step, year the lowest', () => {
+		expect(lowerResolution('year')).toBe('year');
+		expect(lowerResolution('month')).toBe('year');
+		expect(lowerResolution('day')).toBe('month');
+		expect(lowerResolution('hour')).toBe('day');
+		expect(lowerResolution('minute')).toBe('hour');
+		expect(lowerResolution('second')).toBe('minute');
 	});
 });
