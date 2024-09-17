@@ -11,7 +11,7 @@ function joinDates(start: string, end: string) {
 	return `${start}\u2009\u2013\u2009${end}`;
 }
 describe('format date range', () => {
-	test('automatic locale detection should not fail', () => {
+	test('same month', () => {
 		const from = new Date('2023-01-01T00:00:00.000');
 		const to = new Date('2023-01-12T23:59:59.999');
 		const formatter = new DateFormatter();
