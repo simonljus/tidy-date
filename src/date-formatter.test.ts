@@ -1348,6 +1348,41 @@ const formatDateDisplaySecond: {
 	expected: Partial<Record<Resolution, string>>;
 }[] = [
 	{
+		description: 'second, second resolution',
+		date: new Date('2022-01-01T00:00:01.000'),
+		expectedDefault: '2022',
+		expected: { second: 'January 1, 2022 at 12:00:01 AM' },
+		options: { dateResolution: 'second', boundary: 'inclusive' },
+	},
+	{
+		description: 'minute, second resolution',
+		date: new Date('2022-01-01T00:01:00.000'),
+		expectedDefault: '2022',
+		expected: {
+			second: 'January 1, 2022 at 12:01 AM',
+			minute: 'January 1, 2022 at 12:01 AM',
+		},
+		options: { dateResolution: 'second', boundary: 'inclusive' },
+	},
+	{
+		description: 'hour, second resolution',
+		date: new Date('2022-01-01T01:00:00.000'),
+		expectedDefault: '2022',
+		expected: {
+			hour: 'January 1, 2022 at 1 AM',
+			second: 'January 1, 2022 at 1 AM',
+			minute: 'January 1, 2022 at 1 AM',
+		},
+		options: { dateResolution: 'second', boundary: 'inclusive' },
+	},
+	{
+		description: 'day, second resolution',
+		date: new Date('2022-01-02T00:00:00.000'),
+		expectedDefault: 'January 2, 2022',
+		expected: { month: '2022', year: '2022' },
+		options: { dateResolution: 'second', boundary: 'inclusive' },
+	},
+	{
 		description: 'year, second resolution',
 		date: new Date('2022-01-01T00:00:00.000'),
 		expectedDefault: '2022',
