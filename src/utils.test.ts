@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import {
+	fulfillsResolution,
 	getQuarter,
 	isSameDay,
 	isSameHour,
@@ -405,5 +406,32 @@ describe('get quarter', () => {
 		expect(getQuarter(firstMonth)).toBe(3);
 		expect(getQuarter(secondMonth)).toBe(3);
 		expect(getQuarter(thirdMonth)).toBe(3);
+	});
+});
+
+describe('fulfills resolution', () => {
+	test('year', () => {
+		expect(fulfillsResolution('year', 'year')).toBe(true);
+		expect(fulfillsResolution('month', 'year')).toBe(true);
+		expect(fulfillsResolution('day', 'year')).toBe(true);
+		expect(fulfillsResolution('hour', 'year')).toBe(true);
+		expect(fulfillsResolution('minute', 'year')).toBe(true);
+		expect(fulfillsResolution('second', 'year')).toBe(true);
+	});
+	test('hour', () => {
+		expect(fulfillsResolution('year', 'hour')).toBe(false);
+		expect(fulfillsResolution('month', 'hour')).toBe(false);
+		expect(fulfillsResolution('day', 'hour')).toBe(false);
+		expect(fulfillsResolution('hour', 'hour')).toBe(true);
+		expect(fulfillsResolution('minute', 'hour')).toBe(true);
+		expect(fulfillsResolution('second', 'hour')).toBe(true);
+	});
+	test('second', () => {
+		expect(fulfillsResolution('year', 'second')).toBe(false);
+		expect(fulfillsResolution('month', 'second')).toBe(false);
+		expect(fulfillsResolution('day', 'second')).toBe(false);
+		expect(fulfillsResolution('hour', 'second')).toBe(false);
+		expect(fulfillsResolution('minute', 'second')).toBe(false);
+		expect(fulfillsResolution('second', 'second')).toBe(true);
 	});
 });
