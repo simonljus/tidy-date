@@ -98,7 +98,16 @@ function getEndOfQuarter(date: Date) {
 			break;
 		}
 	}
-	return monthEnd(clone);
+	return getEndOfMonth(clone);
+}
+
+/**
+ * monthEnd from formkit/tempo does not change the time
+ * @param date
+ * @returns
+ */
+function getEndOfMonth(date: Date) {
+	return secondEnd(minuteEnd(hourEnd(dayEnd(monthEnd(date)))));
 }
 
 const MONTHS_IN_QUARTER = 3;
@@ -218,7 +227,7 @@ export function isEndOfMonth(
 	date: Date,
 	{ resolution }: { resolution: Resolution },
 ): boolean {
-	return isSameDate(monthEnd(date), date, { resolution });
+	return isSameDate(getEndOfMonth(date), date, { resolution });
 }
 
 export function toZonedDate(date: Date, timeZone: string | undefined) {
@@ -251,7 +260,7 @@ export function endOf(date: Date, resolution: Resolution) {
 		case 'year':
 			return yearEnd(date);
 		case 'month':
-			return monthEnd(date);
+			return getEndOfMonth(date);
 		case 'day':
 			return dayEnd(date);
 		case 'hour':
