@@ -1,5 +1,12 @@
 import { describe, expect, test } from 'vitest';
-import { isSameDay, isSameMonth, isSameYear } from './utils.js';
+import {
+	isSameDay,
+	isSameHour,
+	isSameMinute,
+	isSameMonth,
+	isSameSecond,
+	isSameYear,
+} from './utils.js';
 
 describe('same year', () => {
 	test('start end', () => {
@@ -113,6 +120,182 @@ describe('same day', () => {
 		const to = new Date('2023-08-15T12:34:56.123');
 
 		expect(isSameDay(from, to)).toBe(true);
+	});
+	test('same time', () => {
+		const from = new Date('2023-01-01T00:00:00.000');
+		const to = new Date('2023-12-31T23:59:59.999');
+		expect(isSameDay(from, from)).toBe(true);
+		expect(isSameDay(to, to)).toBe(true);
+	});
+});
+describe('same hour', () => {
+	test('start end', () => {
+		const from = new Date('2023-03-01T00:00:00.000');
+		const to = new Date('2023-03-01T00:59:59.999');
+
+		expect(isSameHour(from, to)).toBe(true);
+	});
+	test('new hour', () => {
+		const from = new Date('2023-04-02T10:59:59.999');
+		const to = new Date('2023-04-02T11:00:00.000');
+
+		expect(isSameHour(from, to)).toBe(false);
+	});
+	test('different days', () => {
+		const from = new Date('2022-08-20T12:34:56.123');
+		const to = new Date('2023-04-15T09:10:11.123');
+
+		expect(isSameHour(from, to)).toBe(false);
+	});
+	test('different year, same hour', () => {
+		const from = new Date('2022-04-22T09:10:11.123');
+		const to = new Date('2023-04-22T09:34:56.123');
+		expect(isSameDay(from, to)).toBe(false);
+	});
+	test('different month,same hour', () => {
+		const from = new Date('2023-04-05T09:10:11.123');
+		const to = new Date('2023-05-05T09:34:56.123');
+		expect(isSameHour(from, to)).toBe(false);
+	});
+	test('different day,same hour', () => {
+		const from = new Date('2023-08-15T09:10:11.123');
+		const to = new Date('2023-08-16T09:10:11.123');
+
+		expect(isSameHour(from, to)).toBe(false);
+	});
+	test('same hour', () => {
+		const from = new Date('2023-08-16T09:01:11.123');
+		const to = new Date('2023-08-16T09:10:11.123');
+
+		expect(isSameHour(from, to)).toBe(true);
+	});
+	test('same time', () => {
+		const from = new Date('2023-01-01T00:00:00.000');
+		const to = new Date('2023-12-31T23:59:59.999');
+		expect(isSameDay(from, from)).toBe(true);
+		expect(isSameDay(to, to)).toBe(true);
+	});
+});
+
+describe('same minute', () => {
+	test('start end', () => {
+		const from = new Date('2023-03-02T04:05:00.000');
+		const to = new Date('2023-03-02T04:05:59.999');
+
+		expect(isSameMinute(from, to)).toBe(true);
+	});
+	test('new minute', () => {
+		const from = new Date('2023-04-02T11:05:59.999');
+		const to = new Date('2023-04-02T11:06:00.000');
+
+		expect(isSameMinute(from, to)).toBe(false);
+	});
+	test('different dates', () => {
+		const from = new Date('2022-08-20T12:34:56.123');
+		const to = new Date('2023-04-15T09:10:11.346');
+
+		expect(isSameMinute(from, to)).toBe(false);
+	});
+	test('different year', () => {
+		const from = new Date('2022-04-22T09:10:11.123');
+		const to = new Date('2023-04-22T09:10:11.123');
+		expect(isSameMinute(from, to)).toBe(false);
+	});
+	test('different month', () => {
+		const from = new Date('2023-04-05T09:10:11.123');
+		const to = new Date('2023-05-05T09:10:11.123');
+		expect(isSameMinute(from, to)).toBe(false);
+	});
+	test('different day', () => {
+		const from = new Date('2023-08-15T09:10:11.123');
+		const to = new Date('2023-08-16T09:10:11.123');
+
+		expect(isSameHour(from, to)).toBe(false);
+	});
+	test('different hour', () => {
+		const from = new Date('2023-08-15T09:10:11.123');
+		const to = new Date('2023-08-15T10:10:11.123');
+
+		expect(isSameMinute(from, to)).toBe(false);
+	});
+	test('different minute', () => {
+		const from = new Date('2023-08-15T10:09:11.123');
+		const to = new Date('2023-08-15T10:10:11.123');
+
+		expect(isSameMinute(from, to)).toBe(false);
+	});
+	test('same minute', () => {
+		const from = new Date('2023-08-16T09:01:11.123');
+		const to = new Date('2023-08-16T09:01:24.567');
+
+		expect(isSameHour(from, to)).toBe(true);
+	});
+	test('same time', () => {
+		const from = new Date('2023-01-01T00:00:00.000');
+		const to = new Date('2023-12-31T23:59:59.999');
+		expect(isSameDay(from, from)).toBe(true);
+		expect(isSameDay(to, to)).toBe(true);
+	});
+});
+
+describe('same second', () => {
+	test('start end', () => {
+		const from = new Date('2023-03-02T04:05:06.000');
+		const to = new Date('2023-03-02T04:05:06.999');
+
+		expect(isSameMinute(from, to)).toBe(true);
+	});
+	test('new second', () => {
+		const from = new Date('2023-04-02T11:05:06.999');
+		const to = new Date('2023-04-02T11:05:07.000');
+
+		expect(isSameSecond(from, to)).toBe(false);
+	});
+	test('different dates', () => {
+		const from = new Date('2022-08-20T12:34:56.123');
+		const to = new Date('2023-04-15T09:10:11.346');
+
+		expect(isSameSecond(from, to)).toBe(false);
+	});
+	test('different year', () => {
+		const from = new Date('2022-04-22T09:10:11.123');
+		const to = new Date('2023-04-22T09:10:11.123');
+		expect(isSameSecond(from, to)).toBe(false);
+	});
+	test('different month', () => {
+		const from = new Date('2023-04-05T09:10:11.123');
+		const to = new Date('2023-05-05T09:10:11.123');
+		expect(isSameSecond(from, to)).toBe(false);
+	});
+	test('different day', () => {
+		const from = new Date('2023-08-15T09:10:11.123');
+		const to = new Date('2023-08-16T09:10:11.123');
+
+		expect(isSameSecond(from, to)).toBe(false);
+	});
+	test('different hour', () => {
+		const from = new Date('2023-08-15T09:10:11.123');
+		const to = new Date('2023-08-15T10:10:11.123');
+
+		expect(isSameSecond(from, to)).toBe(false);
+	});
+	test('different minute', () => {
+		const from = new Date('2023-08-15T10:09:11.123');
+		const to = new Date('2023-08-15T10:10:11.123');
+
+		expect(isSameSecond(from, to)).toBe(false);
+	});
+	test('different second', () => {
+		const from = new Date('2023-08-15T10:10:11.123');
+		const to = new Date('2023-08-15T10:10:12.123');
+
+		expect(isSameSecond(from, to)).toBe(false);
+	});
+	test('same second', () => {
+		const from = new Date('2023-08-16T09:01:11.123');
+		const to = new Date('2023-08-16T09:01:11.567');
+
+		expect(isSameHour(from, to)).toBe(true);
 	});
 	test('same time', () => {
 		const from = new Date('2023-01-01T00:00:00.000');

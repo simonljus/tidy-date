@@ -52,10 +52,13 @@ export function isSameMonth(dateA: Date, dateB: Date) {
 export function isSameDay(dateA: Date, dateB: Date) {
 	return diffHours(dayStart(dateA), dayStart(dateB)) === 0;
 }
-function isSameMinute(dateA: Date, dateB: Date) {
-	return diffMinutes(minuteStart(dateA), minuteStart(dateB)) === 0;
+export function isSameHour(dateA: Date, dateB: Date) {
+	return diffMinutes(hourStart(dateA), hourStart(dateB)) === 0;
 }
-function isSameSecond(dateA: Date, dateB: Date) {
+export function isSameMinute(dateA: Date, dateB: Date) {
+	return diffSeconds(minuteStart(dateA), minuteStart(dateB)) === 0;
+}
+export function isSameSecond(dateA: Date, dateB: Date) {
 	return diffSeconds(dateA, dateB) === 0;
 }
 
@@ -156,7 +159,7 @@ export function isSameDate(
 			return isSameDay(dateA, dateB);
 		}
 		case 'hour': {
-			return isSameSecond(dateA, dateB);
+			return isSameHour(dateA, dateB);
 		}
 		case 'minute': {
 			return isSameMinute(dateA, dateB);
