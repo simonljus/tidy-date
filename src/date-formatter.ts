@@ -127,8 +127,7 @@ export class DateFormatter {
 			timeZone: timeZoneOptions?.timeZone,
 		});
 		const sameMonth = isSameMonth(fromZoned, toZoned);
-		const dateRangeType = this.getRangeType(fromZoned, toZoned);
-
+		const dateRangeType = this.getRangeType(from, to, { timeZoneOptions });
 		if (dateRangeType === 'fullQuarters' && !this.onlyIntl) {
 			return this.formatRangeFullQuarters(fromZoned, toZoned, {
 				locale,
@@ -182,7 +181,7 @@ export class DateFormatter {
 		const sameMonth = isSameMonth(fromZoned, toZoned);
 		const sameYear = isSameYear(fromZoned, toZoned);
 		const thisYear = sameYear && isSameYear(fromZoned, todayZoned);
-		const dateRangeType = this.getRangeType(fromZoned, toZoned);
+		const dateRangeType = this.getRangeType(from, to);
 
 		if (dateRangeType === 'fullQuarters' && !this.onlyIntl) {
 			return this.formatRangeFullQuarters(fromZoned, toZoned, {
@@ -192,8 +191,8 @@ export class DateFormatter {
 		}
 
 		const { showMonth, showDay, showYear, showHour, showMinute, showSecond } =
-			this.formatRangePartsToShowToday(fromZoned, toZoned, {
-				today: todayZoned,
+			this.formatRangePartsToShowToday(from, to, {
+				today,
 			});
 
 		const { from: fromIntl, to: toIntl } = this.adjustDatesForDisplayIntl(
@@ -325,10 +324,12 @@ export class DateFormatter {
 		if (this.boundary === 'inclusive') {
 			return endOf(zoned, displayResolution) as AdjustedDate;
 		}
-		const startZoned = startOf(zoned, lowerResolution(displayResolution));
+		const startZoned = startOf(zoned, displayResolution);
+
 		if (!isSameDate(startZoned, zoned, { resolution: dateResolution })) {
 			return endOf(zoned, displayResolution) as AdjustedDate;
 		}
+
 		return endOf(
 			addResolution(zoned, dateResolution, -1),
 			displayResolution,
@@ -475,7 +476,7 @@ export class DateFormatter {
 			return endOf(zoned, displayResolution) as AdjustedDate;
 		}
 
-		const startZoned = startOf(zoned, lowerResolution(displayResolution));
+		const startZoned = startOf(zoned, displayResolution);
 
 		if (
 			showTime ||

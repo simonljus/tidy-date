@@ -1653,4 +1653,37 @@ describe('ReadME', () => {
 			}).formatRange(from, to, { locale: 'en-US' }),
 		).toBe(joinDates('Jan 1, 2022', 'Oct 5, 2024'));
 	});
+	test('Inclusive, full day, day res', () => {
+		const from = new Date('2024-06-06T00:00:00');
+		const to = new Date('2024-06-06T23:59:59');
+		expect(
+			new DateFormatter({
+				displayResolution: 'day',
+				dateResolution: 'second',
+				boundary: 'inclusive',
+			}).formatRange(from, to, { locale: 'en-US' }),
+		).toBe('Jun 6, 2024');
+	});
+	test('Exclusive, full day, second res', () => {
+		const from = new Date('2024-06-06T00:00:00');
+		const to = new Date('2024-06-07T00:00:00');
+		expect(
+			new DateFormatter({
+				displayResolution: 'second',
+				dateResolution: 'second',
+				boundary: 'exclusive',
+			}).formatRange(from, to, { locale: 'en-US' }),
+		).toBe('Jun 6, 2024');
+	});
+	test('Exclusive, full day, day res', () => {
+		const from = new Date('2024-06-06T00:00:00');
+		const to = new Date('2024-06-07T00:00:00');
+		expect(
+			new DateFormatter({
+				displayResolution: 'day',
+				dateResolution: 'second',
+				boundary: 'exclusive',
+			}).formatRange(from, to, { locale: 'en-US' }),
+		).toBe('Jun 6, 2024');
+	});
 });
