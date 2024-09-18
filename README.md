@@ -21,7 +21,7 @@ const fromDate = new Date("2024-08-05T00:00:00")
 const toDate = new Date("2024-09-18T23:59:59")
 const userLocale = getUserLocaleOrDefault("en-US") // TODO
 const formatter = new DateFormatter();
-const fomrattedRange = formatter.formatRange(fromDate,toDate,{locale: userLocale})
+const formattedRange = formatter.formatRange(fromDate,toDate,{locale: userLocale})
 ```
 
 ## Omitting parts
