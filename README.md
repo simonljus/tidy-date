@@ -14,6 +14,11 @@ With inspiration from [vercel/little-date](https://github.com/vercel/little-date
 
 
 ## How to use
+## Install
+```bash
+npm install @simonljus/tidy-date
+```
+### Usage
 ```typescript
 import {DateFormatter} from '@simonljus/tidy-date'
 
