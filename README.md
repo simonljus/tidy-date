@@ -70,21 +70,23 @@ Could be any type of date range
 Dates are displayed as inclusive and times are displayed as exclusive. 
 ### Examples 
 
-National day of sweden:
-`June 6 YYYY 00:00:00 - June 7 YYYY 00:00:00` -> `June 6 YYYY`
+National day of Sweden:
+`2024-06-06T00:00:00 - 2024-06-07T00:00:00` -> `June 6 2024`
 
-Working 9 to 5 
-`9:00 AM - 5:00 PM` -> `9 AM - 5 PM`
+Working 9 to 5:
+`2024-09-17T09:00:00 - 2024-09-17T16:59:59` -> `9 AM - 5 PM`
 
 
 ## Resolutions
 
 ### Date resolution
-Sometimes the date information from the API might not be exact down to the second, such as Historical events. Sometimes, only the Year is known.
+Sometimes the date information from the API might not be exact down to the second, such as Historical events.
+`1520-12-02T09:00:00 - 1521-03-04T00:00:00` with `dateResolution:'year'` Will be interpreted as  `1523` 
+Sometimes, only the Year is known.
 
 ### Display resolution
 Even if the API has date information down to the second, the user might not be interested in it. For example, only interested in the calendar day.
-
+`2024-10-04:T10:00:00 - 2024-10-04:T22:00:00` with `displayResolution:'day'`   -> `Oct 4, 2024`
 
 
 

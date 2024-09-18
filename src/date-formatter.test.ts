@@ -1686,4 +1686,46 @@ describe('ReadME', () => {
 			}).formatRange(from, to, { locale: 'en-US' }),
 		).toBe('Jun 6, 2024');
 	});
+
+	test('Working nine to five', () => {
+		const from = new Date('2024-09-17T09:00:00');
+		const to = new Date('2024-09-17T16:59:59');
+		expect(
+			new DateFormatter({
+				displayResolution: 'second',
+				dateResolution: 'second',
+			}).formatRangeToday(from, to, {
+				locale: 'en-US',
+				today: new Date('2024-09-17T13:37:00'),
+			}),
+		).toBe(joinDates('9 AM', '5 PM'));
+	});
+	test('Resolutions,date resolution, year', () => {
+		const from = new Date('1520-12-12T09:00:00');
+		const to = new Date('1521-03-04T00:00:00');
+		expect(
+			new DateFormatter({
+				dateResolution: 'year',
+			}).formatRange(from, to, { locale: 'en-US' }),
+		).toBe(joinDates('1520', '1521'));
+	});
+
+	test('Resolutions,date resolution, year', () => {
+		const from = new Date('1520-12-12T09:00:00');
+		const to = new Date('1521-03-04T00:00:00');
+		expect(
+			new DateFormatter({
+				dateResolution: 'year',
+			}).formatRange(from, to, { locale: 'en-US' }),
+		).toBe(joinDates('1520', '1521'));
+	});
+	test('Resolutions,display resolution, day', () => {
+		const from = new Date('2024-10-04T10:00:00');
+		const to = new Date('2024-10-04T22:00:00');
+		expect(
+			new DateFormatter({
+				displayResolution: 'day',
+			}).formatRange(from, to, { locale: 'en-US' }),
+		).toBe('Oct 4, 2024');
+	});
 });
