@@ -1,5 +1,5 @@
 {
-	"name": "tidy-date",
+	"name": "@simonljus/tidy-date",
 	"version": "0.1.0",
 	"license": "MIT",
 	"type": "module",
