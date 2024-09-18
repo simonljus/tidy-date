@@ -15,47 +15,50 @@ With inspiration from [vercel/little-date](https://github.com/vercel/little-date
 ## Omitting parts
 Timestamps that starts on the start of the day and ends at the end of a day (or start of a day if exclusive ranges) will be omitted.
 
-`2022-11-07T00:00:00.000 - 2024-10-04T23:59:59.999` -> `Nov 7, 2022 – Oct 4, 2024`s
+`2022-11-07T00:00:00 - 2024-10-04T23:59:59` -> `Nov 7, 2022 – Oct 4, 2024`s
 
 When a time part has to be displayed for either start or end date, it has te be displayed for the other date as well. [Intl.DateTimeFormat.prototype.formatRangeToParts()](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat/formatRangeToParts) could be used but found it difficult to know what literal to remove if the date part was removed. Submit a PR! 
-`7 Nov 2022 15:00:00 - 4 Oct 2024 23:59:59 ` -> `Nov 7, 2022, 3 PM – Oct 5, 2024, 12 AM`
+
+`2022-11-07T15:00:00 - 2024-10-04T23:59:59 ` -> `Nov 7, 2022, 3 PM – Oct 5, 2024, 12 AM`
 
 ## Range types
 
 ### Full years
-`1 Jan 2024  - 31 Dec 2025`  -> `2024-2025`
+`2024-01-01T00:00:00  - 2025-12-31T23:59:59`  -> `2024-2025`
 
 ### Full quarters
 Quarters does not exist in Intl.DateTimeFormat. This means there is no localization support.
 This is only used when `onlyIntl` is set to `false`
 
-* `1 Apr 2024 - 30 Sep 2024` -> `Q1-Q3 2024`
-* With the current year: -> `Q1-Q3`
+* `2024-04-01T00:00:00 - 2024-09-30T23:59:59` -> `Q2-Q3 2024`
+* With the current year: -> `Q2–Q3`
 
 
 ### Full months
 From the start of a month to the end of another:
-* `1 Mar 2024 -  31 May 2024` -> `Mar - May 2024`
+* `2024-03-01T00:00:00 -  2024-05-31T23:59:59` -> `Mar – May 2024`
+* With the current year -> `Mar – May`
 
 * When the months span over different years
-    * `1 Mar 2023 -  31 May 2024` -> `Mar 2023 - May 2024`
+    * `2023-03-01T00:00:00 -  2024-05-31T23:59:59` -> `Mar – May 2024`
 
 
 
 ### Same Day 
 Same year, month and day
-* `1 Apr 2024 13:37 - 1 Apr 2024 14:00` -> `1 Apr 2024 13:37-14:00`
-* With the current day -> `13:37 - 14:00`
+* `2024-04-01T13:37:00 - 2024-04-01T13:59:59` -> `Apr 1, 2024, 1:37 – 2:00 PM`
+* With the current day -> `1:37 – 2:00 PM`
+* * With the current month (April in this example) -> `Apr 1, 1:37 – 2:00 PM`
 
 ### Same month
 Same year and month, but not day
-* `1 Jan 2024 - 5 Jan 2024` -> `1-5 Jan 2024`
-* With the current year -> `1-5 Jan`
+* `2024-01-01T00:00:00 - 2024-10-05T23:59:59` -> `Jan 1 – 5, 2024`
+* With the current year -> `Jan 1 – 5`
 
 ### Same year
 Dates with the same year
-* `1 Jan 2024 - 5 Oct 2024` -> `1 Jan - 5 Oct 2024`
-* With the current year: -> `1 Jan - 5 Oct`
+* `1 Jan 2024 - 5 Oct 2024` -> `Jan 1 – Oct 5, 2024`
+* With the current year: -> `Jan 1 – Oct 5`
 
 ### Other cases
 Could be any type of date range

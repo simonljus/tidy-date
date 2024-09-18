@@ -1,3 +1,4 @@
+import { sameYear } from '@formkit/tempo';
 import {
 	type AdjustedDate,
 	type Resolution,
@@ -246,7 +247,7 @@ export class DateFormatter {
 			showMinute,
 			showSecond,
 			showDay: showDay && !thisDay,
-			showMonth: showMonth && !thisMonth,
+			showMonth: showMonth && !thisDay, // still show month if same month but different days
 			showYear: !thisYear,
 		};
 	}
@@ -368,6 +369,12 @@ export class DateFormatter {
 			return [`Q${getQuarter(from) + 1}`, `Q${getQuarter(to) + 1}`].join(
 				'\u2013',
 			);
+		}
+		if (isSameYear(from, to)) {
+			const toYear = new Intl.DateTimeFormat(locale, {
+				year: 'numeric',
+			}).format(to);
+			return `Q${getQuarter(from) + 1}\u2013Q${getQuarter(to) + 1} ${toYear}`;
 		}
 		const fromYear = new Intl.DateTimeFormat(locale, {
 			year: 'numeric',

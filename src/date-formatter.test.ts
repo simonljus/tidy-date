@@ -1505,3 +1505,152 @@ for (const permutation of datePermutations) {
 		},
 	);
 }
+
+describe('ReadME', () => {
+	test('Omitting parts, start end time', () => {
+		const from = new Date('2022-11-07T00:00:00');
+		const to = new Date('2024-10-04T23:59:59');
+		expect(
+			new DateFormatter({
+				displayResolution: 'second',
+				dateResolution: 'second',
+			}).formatRange(from, to, { locale: 'en-US' }),
+		).toBe(joinDates('Nov 7, 2022', 'Oct 4, 2024'));
+	});
+	test('Omitting parts, show start hour', () => {
+		const from = new Date('2022-11-07T15:00:00');
+		const to = new Date('2024-10-04T23:59:59');
+		expect(
+			new DateFormatter({
+				displayResolution: 'second',
+				dateResolution: 'second',
+			}).formatRange(from, to, { locale: 'en-US' }),
+		).toBe(joinDates('Nov 7, 2022, 3 PM', 'Oct 5, 2024, 12 AM'));
+	});
+	test('Full years, multiple years', () => {
+		const from = new Date('2024-01-01T00:00:00');
+		const to = new Date('2025-12-31T23:59:59');
+		expect(
+			new DateFormatter({
+				displayResolution: 'second',
+				dateResolution: 'second',
+			}).formatRange(from, to, { locale: 'en-US' }),
+		).toBe(joinDates('2024', '2025'));
+	});
+	test('Full quarters, multiple quarters same year', () => {
+		const from = new Date('2024-04-01T00:00:00');
+		const to = new Date('2024-09-30T23:59:59');
+		expect(
+			new DateFormatter({
+				displayResolution: 'second',
+				dateResolution: 'second',
+				onlyIntl: false,
+			}).formatRange(from, to, { locale: 'en-US' }),
+		).toBe('Q2\u2013Q3 2024');
+	});
+	test('Full months, same year', () => {
+		const from = new Date('2024-03-01T00:00:00');
+		const to = new Date('2024-05-31T23:59:59');
+		expect(
+			new DateFormatter({
+				displayResolution: 'second',
+				dateResolution: 'second',
+			}).formatRange(from, to, { locale: 'en-US' }),
+		).toBe(joinDates('Mar', 'May 2024'));
+	});
+	test('Full months, this year', () => {
+		const from = new Date('2024-03-01T00:00:00');
+		const to = new Date('2024-05-31T23:59:59');
+		const today = new Date('2024-09-18T00:00:00');
+		expect(
+			new DateFormatter({
+				displayResolution: 'second',
+				dateResolution: 'second',
+			}).formatRangeToday(from, to, { locale: 'en-US', today }),
+		).toBe(joinDates('Mar', 'May'));
+	});
+
+	test('Full months, different years', () => {
+		const from = new Date('2023-03-01T00:00:00');
+		const to = new Date('2024-05-31T23:59:59');
+		expect(
+			new DateFormatter({
+				displayResolution: 'second',
+				dateResolution: 'second',
+			}).formatRange(from, to, { locale: 'en-US' }),
+		).toBe(joinDates('Mar 2023', 'May 2024'));
+	});
+	test('Same day, different minutes', () => {
+		const from = new Date('2024-04-01T13:37:00');
+		const to = new Date('2024-04-01T13:59:59');
+		expect(
+			new DateFormatter({
+				displayResolution: 'second',
+				dateResolution: 'second',
+			}).formatRange(from, to, { locale: 'en-US' }),
+		).toBe(joinDates('Apr 1, 2024, 1:37', '2:00 PM'));
+	});
+	test('This day, different minutes', () => {
+		const from = new Date('2024-04-01T13:37:00');
+		const to = new Date('2024-04-01T13:59:59');
+		const today = new Date('2024-04-01T08:15:00');
+		expect(
+			new DateFormatter({
+				displayResolution: 'second',
+				dateResolution: 'second',
+			}).formatRangeToday(from, to, { locale: 'en-US', today }),
+		).toBe(joinDates('1:37', '2:00 PM'));
+	});
+	test('This day, same year', () => {
+		const from = new Date('2024-04-01T13:37:00');
+		const to = new Date('2024-04-01T13:59:59');
+		const today = new Date('2024-04-18T08:15:00');
+		expect(
+			new DateFormatter({
+				displayResolution: 'second',
+				dateResolution: 'second',
+			}).formatRangeToday(from, to, { locale: 'en-US', today }),
+		).toBe(joinDates('Apr 1, 1:37', '2:00 PM'));
+	});
+	test('Same month', () => {
+		const from = new Date('2024-01-01T00:00:00');
+		const to = new Date('2024-01-05T23:59:59');
+		expect(
+			new DateFormatter({
+				displayResolution: 'second',
+				dateResolution: 'second',
+			}).formatRange(from, to, { locale: 'en-US' }),
+		).toBe(joinDates('Jan 1', '5, 2024'));
+	});
+	test('Same month, same year', () => {
+		const from = new Date('2024-01-01T00:00:00');
+		const to = new Date('2024-01-05T23:59:59');
+		const today = new Date('2024-04-18T08:15:00');
+		expect(
+			new DateFormatter({
+				displayResolution: 'second',
+				dateResolution: 'second',
+			}).formatRangeToday(from, to, { locale: 'en-US', today }),
+		).toBe(joinDates('Jan 1', '5'));
+	});
+	test('Same year', () => {
+		const from = new Date('2024-01-01T00:00:00');
+		const to = new Date('2024-10-05T23:59:59');
+		expect(
+			new DateFormatter({
+				displayResolution: 'second',
+				dateResolution: 'second',
+			}).formatRange(from, to, { locale: 'en-US' }),
+		).toBe(joinDates('Jan 1', 'Oct 5, 2024'));
+	});
+	test('Different dates', () => {
+		const from = new Date('2022-01-01T00:00:00');
+		const to = new Date('2024-10-05T23:59:59');
+		expect(
+			new DateFormatter({
+				displayResolution: 'second',
+				dateResolution: 'second',
+			}).formatRange(from, to, { locale: 'en-US' }),
+		).toBe(joinDates('Jan 1, 2022', 'Oct 5, 2024'));
+	});
+});
